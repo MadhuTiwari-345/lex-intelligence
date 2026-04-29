@@ -3,20 +3,36 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: LexAI API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: dashboard
+    description: Dashboard summaries and activity
+  - name: matters
+    description: Legal matters / cases
+  - name: contracts
+    description: Contract drafting and management
+  - name: documents
+    description: Document intelligence and analysis
+  - name: deadlines
+    description: Deadlines and matter tracker
+  - name: research
+    description: Case law research
+  - name: briefs
+    description: Client brief generator
+  - name: settings
+    description: Workspace settings
+
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +40,976 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Aggregate counts and stats
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/activity:
+    get:
+      operationId: getRecentActivity
+      tags: [dashboard]
+      summary: Recent activity timeline
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityItem"
+
+  /dashboard/risk-overview:
+    get:
+      operationId: getRiskOverview
+      tags: [dashboard]
+      summary: Risk distribution across contracts and documents
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RiskOverview"
+
+  /matters:
+    get:
+      operationId: listMatters
+      tags: [matters]
+      summary: List matters
+      parameters:
+        - in: query
+          name: status
+          required: false
+          schema:
+            type: string
+            enum: [active, on_hold, closed]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Matter"
+    post:
+      operationId: createMatter
+      tags: [matters]
+      summary: Create a matter
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateMatterInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Matter"
+
+  /matters/{id}:
+    get:
+      operationId: getMatter
+      tags: [matters]
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MatterDetail"
+    patch:
+      operationId: updateMatter
+      tags: [matters]
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateMatterInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Matter"
+    delete:
+      operationId: deleteMatter
+      tags: [matters]
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "204":
+          description: Deleted
+
+  /contracts:
+    get:
+      operationId: listContracts
+      tags: [contracts]
+      parameters:
+        - in: query
+          name: matterId
+          required: false
+          schema:
+            type: integer
+        - in: query
+          name: status
+          required: false
+          schema:
+            type: string
+            enum: [draft, review, signed]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Contract"
+    post:
+      operationId: createContract
+      tags: [contracts]
+      summary: Create a contract manually
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateContractInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contract"
+
+  /contracts/draft:
+    post:
+      operationId: draftContract
+      tags: [contracts]
+      summary: AI-generate a contract from a prompt
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DraftContractInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contract"
+
+  /contracts/{id}:
+    get:
+      operationId: getContract
+      tags: [contracts]
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contract"
+    patch:
+      operationId: updateContract
+      tags: [contracts]
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateContractInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contract"
+    delete:
+      operationId: deleteContract
+      tags: [contracts]
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "204":
+          description: Deleted
+
+  /contracts/{id}/analyze:
+    post:
+      operationId: analyzeContract
+      tags: [contracts]
+      summary: AI risk-score and flag clauses
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Contract"
+
+  /documents:
+    get:
+      operationId: listDocuments
+      tags: [documents]
+      parameters:
+        - in: query
+          name: matterId
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Document"
+    post:
+      operationId: createDocument
+      tags: [documents]
+      summary: Upload (paste) a document for storage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDocumentInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+
+  /documents/{id}:
+    get:
+      operationId: getDocument
+      tags: [documents]
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+    delete:
+      operationId: deleteDocument
+      tags: [documents]
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "204":
+          description: Deleted
+
+  /documents/{id}/analyze:
+    post:
+      operationId: analyzeDocument
+      tags: [documents]
+      summary: AI clause-by-clause analysis with risk score
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Document"
+
+  /deadlines:
+    get:
+      operationId: listDeadlines
+      tags: [deadlines]
+      parameters:
+        - in: query
+          name: status
+          required: false
+          schema:
+            type: string
+            enum: [upcoming, completed, missed]
+        - in: query
+          name: matterId
+          required: false
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Deadline"
+    post:
+      operationId: createDeadline
+      tags: [deadlines]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateDeadlineInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Deadline"
+
+  /deadlines/upcoming:
+    get:
+      operationId: listUpcomingDeadlines
+      tags: [deadlines]
+      summary: Next 7 upcoming deadlines
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Deadline"
+
+  /deadlines/{id}:
+    patch:
+      operationId: updateDeadline
+      tags: [deadlines]
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateDeadlineInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Deadline"
+    delete:
+      operationId: deleteDeadline
+      tags: [deadlines]
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "204":
+          description: Deleted
+
+  /research:
+    get:
+      operationId: listResearchQueries
+      tags: [research]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ResearchQuery"
+    post:
+      operationId: createResearchQuery
+      tags: [research]
+      summary: Run a case-law research query
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateResearchInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResearchQuery"
+
+  /research/{id}:
+    get:
+      operationId: getResearchQuery
+      tags: [research]
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResearchQuery"
+    delete:
+      operationId: deleteResearchQuery
+      tags: [research]
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "204":
+          description: Deleted
+
+  /briefs:
+    get:
+      operationId: listBriefs
+      tags: [briefs]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Brief"
+    post:
+      operationId: createBrief
+      tags: [briefs]
+      summary: Generate a plain-English client brief from legalese
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBriefInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brief"
+
+  /briefs/{id}:
+    get:
+      operationId: getBrief
+      tags: [briefs]
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Brief"
+    delete:
+      operationId: deleteBrief
+      tags: [briefs]
+      parameters:
+        - $ref: "#/components/parameters/IdPath"
+      responses:
+        "204":
+          description: Deleted
+
+  /settings:
+    get:
+      operationId: getSettings
+      tags: [settings]
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Settings"
+    patch:
+      operationId: updateSettings
+      tags: [settings]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSettingsInput"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Settings"
+
 components:
+  parameters:
+    IdPath:
+      in: path
+      name: id
+      required: true
+      schema:
+        type: integer
+
   schemas:
     HealthStatus:
       type: object
+      required: [status]
       properties:
         status:
           type: string
-      required:
-        - status
 
+    Jurisdiction:
+      type: string
+      enum: [india, uk, us]
+
+    DashboardSummary:
+      type: object
+      required:
+        - matterCount
+        - activeMatterCount
+        - contractCount
+        - draftContractCount
+        - documentCount
+        - upcomingDeadlineCount
+        - overdueDeadlineCount
+        - researchCount
+        - briefCount
+        - averageRiskScore
+        - highRiskCount
+      properties:
+        matterCount: { type: integer }
+        activeMatterCount: { type: integer }
+        contractCount: { type: integer }
+        draftContractCount: { type: integer }
+        documentCount: { type: integer }
+        upcomingDeadlineCount: { type: integer }
+        overdueDeadlineCount: { type: integer }
+        researchCount: { type: integer }
+        briefCount: { type: integer }
+        averageRiskScore: { type: number }
+        highRiskCount: { type: integer }
+
+    ActivityItem:
+      type: object
+      required: [id, kind, title, timestamp]
+      properties:
+        id: { type: string }
+        kind:
+          type: string
+          enum: [matter, contract, document, deadline, research, brief]
+        title: { type: string }
+        subtitle:
+          type: ["string", "null"]
+        timestamp:
+          type: string
+          format: date-time
+        matterId:
+          type: ["integer", "null"]
+
+    RiskOverview:
+      type: object
+      required: [low, medium, high, critical]
+      properties:
+        low: { type: integer }
+        medium: { type: integer }
+        high: { type: integer }
+        critical: { type: integer }
+
+    Matter:
+      type: object
+      required: [id, name, client, jurisdiction, status, createdAt, updatedAt]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        client: { type: string }
+        jurisdiction:
+          $ref: "#/components/schemas/Jurisdiction"
+        status:
+          type: string
+          enum: [active, on_hold, closed]
+        description:
+          type: ["string", "null"]
+        practiceArea:
+          type: ["string", "null"]
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    MatterDetail:
+      allOf:
+        - $ref: "#/components/schemas/Matter"
+        - type: object
+          required: [contractCount, documentCount, deadlineCount]
+          properties:
+            contractCount: { type: integer }
+            documentCount: { type: integer }
+            deadlineCount: { type: integer }
+
+    CreateMatterInput:
+      type: object
+      required: [name, client, jurisdiction]
+      properties:
+        name: { type: string }
+        client: { type: string }
+        jurisdiction:
+          $ref: "#/components/schemas/Jurisdiction"
+        status:
+          type: string
+          enum: [active, on_hold, closed]
+        description:
+          type: ["string", "null"]
+        practiceArea:
+          type: ["string", "null"]
+
+    UpdateMatterInput:
+      type: object
+      properties:
+        name: { type: string }
+        client: { type: string }
+        jurisdiction:
+          $ref: "#/components/schemas/Jurisdiction"
+        status:
+          type: string
+          enum: [active, on_hold, closed]
+        description:
+          type: ["string", "null"]
+        practiceArea:
+          type: ["string", "null"]
+
+    ContractType:
+      type: string
+      enum: [nda, msa, employment, lease, spa, services, partnership, licensing, consulting, other]
+
+    RiskFlag:
+      type: object
+      required: [clause, severity, explanation]
+      properties:
+        clause: { type: string }
+        severity:
+          type: string
+          enum: [low, medium, high, critical]
+        explanation: { type: string }
+
+    Contract:
+      type: object
+      required:
+        - id
+        - title
+        - type
+        - jurisdiction
+        - status
+        - content
+        - createdAt
+        - updatedAt
+      properties:
+        id: { type: integer }
+        matterId:
+          type: ["integer", "null"]
+        title: { type: string }
+        type:
+          $ref: "#/components/schemas/ContractType"
+        jurisdiction:
+          $ref: "#/components/schemas/Jurisdiction"
+        status:
+          type: string
+          enum: [draft, review, signed]
+        counterparty:
+          type: ["string", "null"]
+        content: { type: string }
+        riskScore:
+          type: ["integer", "null"]
+        riskFlags:
+          type: array
+          items:
+            $ref: "#/components/schemas/RiskFlag"
+        summary:
+          type: ["string", "null"]
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    CreateContractInput:
+      type: object
+      required: [title, type, jurisdiction, content]
+      properties:
+        matterId:
+          type: ["integer", "null"]
+        title: { type: string }
+        type:
+          $ref: "#/components/schemas/ContractType"
+        jurisdiction:
+          $ref: "#/components/schemas/Jurisdiction"
+        status:
+          type: string
+          enum: [draft, review, signed]
+        counterparty:
+          type: ["string", "null"]
+        content: { type: string }
+
+    UpdateContractInput:
+      type: object
+      properties:
+        title: { type: string }
+        type:
+          $ref: "#/components/schemas/ContractType"
+        jurisdiction:
+          $ref: "#/components/schemas/Jurisdiction"
+        status:
+          type: string
+          enum: [draft, review, signed]
+        counterparty:
+          type: ["string", "null"]
+        content: { type: string }
+
+    DraftContractInput:
+      type: object
+      required: [title, type, jurisdiction, prompt]
+      properties:
+        matterId:
+          type: ["integer", "null"]
+        title: { type: string }
+        type:
+          $ref: "#/components/schemas/ContractType"
+        jurisdiction:
+          $ref: "#/components/schemas/Jurisdiction"
+        counterparty:
+          type: ["string", "null"]
+        prompt:
+          type: string
+          description: Plain-English description of the deal
+
+    ClauseAnalysis:
+      type: object
+      required: [clause, summary, severity]
+      properties:
+        clause: { type: string }
+        summary: { type: string }
+        severity:
+          type: string
+          enum: [low, medium, high, critical]
+        recommendation:
+          type: ["string", "null"]
+
+    Document:
+      type: object
+      required: [id, title, jurisdiction, content, createdAt]
+      properties:
+        id: { type: integer }
+        matterId:
+          type: ["integer", "null"]
+        title: { type: string }
+        docType:
+          type: ["string", "null"]
+        jurisdiction:
+          $ref: "#/components/schemas/Jurisdiction"
+        content: { type: string }
+        summary:
+          type: ["string", "null"]
+        riskScore:
+          type: ["integer", "null"]
+        clauseAnalysis:
+          type: array
+          items:
+            $ref: "#/components/schemas/ClauseAnalysis"
+        createdAt: { type: string, format: date-time }
+
+    CreateDocumentInput:
+      type: object
+      required: [title, jurisdiction, content]
+      properties:
+        matterId:
+          type: ["integer", "null"]
+        title: { type: string }
+        docType:
+          type: ["string", "null"]
+        jurisdiction:
+          $ref: "#/components/schemas/Jurisdiction"
+        content: { type: string }
+
+    Deadline:
+      type: object
+      required: [id, title, dueDate, type, status, priority, createdAt]
+      properties:
+        id: { type: integer }
+        matterId:
+          type: ["integer", "null"]
+        matterName:
+          type: ["string", "null"]
+        title: { type: string }
+        description:
+          type: ["string", "null"]
+        dueDate: { type: string, format: date-time }
+        type:
+          type: string
+          enum: [filing, court_date, statute, internal, client_meeting]
+        status:
+          type: string
+          enum: [upcoming, completed, missed]
+        priority:
+          type: string
+          enum: [low, medium, high]
+        createdAt: { type: string, format: date-time }
+
+    CreateDeadlineInput:
+      type: object
+      required: [title, dueDate, type, priority]
+      properties:
+        matterId:
+          type: ["integer", "null"]
+        title: { type: string }
+        description:
+          type: ["string", "null"]
+        dueDate: { type: string, format: date-time }
+        type:
+          type: string
+          enum: [filing, court_date, statute, internal, client_meeting]
+        priority:
+          type: string
+          enum: [low, medium, high]
+
+    UpdateDeadlineInput:
+      type: object
+      properties:
+        title: { type: string }
+        description:
+          type: ["string", "null"]
+        dueDate: { type: string, format: date-time }
+        type:
+          type: string
+          enum: [filing, court_date, statute, internal, client_meeting]
+        status:
+          type: string
+          enum: [upcoming, completed, missed]
+        priority:
+          type: string
+          enum: [low, medium, high]
+
+    Citation:
+      type: object
+      required: [caseName, citation, summary]
+      properties:
+        caseName: { type: string }
+        citation: { type: string }
+        court:
+          type: ["string", "null"]
+        year:
+          type: ["integer", "null"]
+        summary: { type: string }
+        relevance:
+          type: ["string", "null"]
+
+    ResearchQuery:
+      type: object
+      required: [id, question, jurisdiction, summary, createdAt]
+      properties:
+        id: { type: integer }
+        matterId:
+          type: ["integer", "null"]
+        question: { type: string }
+        jurisdiction:
+          $ref: "#/components/schemas/Jurisdiction"
+        summary: { type: string }
+        riskFlags:
+          type: array
+          items: { type: string }
+        citations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Citation"
+        createdAt: { type: string, format: date-time }
+
+    CreateResearchInput:
+      type: object
+      required: [question, jurisdiction]
+      properties:
+        matterId:
+          type: ["integer", "null"]
+        question: { type: string }
+        jurisdiction:
+          $ref: "#/components/schemas/Jurisdiction"
+
+    Brief:
+      type: object
+      required: [id, title, originalText, plainEnglish, complexity, createdAt]
+      properties:
+        id: { type: integer }
+        matterId:
+          type: ["integer", "null"]
+        title: { type: string }
+        originalText: { type: string }
+        plainEnglish: { type: string }
+        keyPoints:
+          type: array
+          items: { type: string }
+        complexity:
+          type: string
+          enum: [basic, standard, detailed]
+        createdAt: { type: string, format: date-time }
+
+    CreateBriefInput:
+      type: object
+      required: [title, originalText, complexity]
+      properties:
+        matterId:
+          type: ["integer", "null"]
+        title: { type: string }
+        originalText: { type: string }
+        complexity:
+          type: string
+          enum: [basic, standard, detailed]
+
+    Settings:
+      type: object
+      required: [id, defaultJurisdiction, plan]
+      properties:
+        id: { type: integer }
+        firmName:
+          type: ["string", "null"]
+        attorneyName:
+          type: ["string", "null"]
+        defaultJurisdiction:
+          $ref: "#/components/schemas/Jurisdiction"
+        plan:
+          type: string
+          enum: [solo, firm, enterprise]
+
+    UpdateSettingsInput:
+      type: object
+      properties:
+        firmName:
+          type: ["string", "null"]
+        attorneyName:
+          type: ["string", "null"]
+        defaultJurisdiction:
+          $ref: "#/components/schemas/Jurisdiction"
+        plan:
+          type: string
+          enum: [solo, firm, enterprise]

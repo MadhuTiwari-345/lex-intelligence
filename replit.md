@@ -1,27 +1,39 @@
-# Workspace
+# LexAI
 
-## Overview
+A legal intelligence platform for solo lawyers, boutique firms, and in-house legal teams.
 
-pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
+## Features
 
-## Stack
+- **Dashboard** — KPIs, upcoming deadlines, recent activity, risk distribution.
+- **Matters** — case/matter management with jurisdiction (India / UK / US).
+- **Contract Drafting Engine** — AI generates a complete contract from a plain-English prompt.
+- **Risk Scoring** — AI risk-scores contracts and surfaces flagged clauses.
+- **Document Intelligence** — clause-by-clause analysis with severity and recommendations.
+- **Deadline & Matter Tracker** — filings, court dates, statutes with priority.
+- **Case Law Research** — AI synthesis with citations.
+- **Client Brief Generator** — translates legalese to plain English.
+- **Multi-Jurisdiction Mode** — India, UK, US, set per matter / contract / document.
+- **Settings** — firm profile and default jurisdiction.
 
-- **Monorepo tool**: pnpm workspaces
-- **Node.js version**: 24
-- **Package manager**: pnpm
-- **TypeScript version**: 5.9
-- **API framework**: Express 5
-- **Database**: PostgreSQL + Drizzle ORM
-- **Validation**: Zod (`zod/v4`), `drizzle-zod`
-- **API codegen**: Orval (from OpenAPI spec)
-- **Build**: esbuild (CJS bundle)
+## Architecture
 
-## Key Commands
+- **Frontend**: React + Vite (`artifacts/lexai`) at `/`. wouter, TanStack Query, shadcn/ui, Tailwind, react-hook-form + zod.
+- **API**: Express 5 (`artifacts/api-server`) at `/api`. Routes per resource in `src/routes/`.
+- **Database**: Postgres via Drizzle ORM (`lib/db`). Tables: matters, contracts, documents, deadlines, research_queries, briefs, settings.
+- **Contract**: OpenAPI-first in `lib/api-spec/openapi.yaml`. Codegen produces React Query hooks (`@workspace/api-client-react`) and Zod schemas (`@workspace/api-zod`).
+- **AI**: OpenAI via the Replit AI Integration. Helpers live in `artifacts/api-server/src/lib/ai.ts` and a thin client in `src/lib/openai.ts`. Model: `gpt-5.4`.
 
-- `pnpm run typecheck` — full typecheck across all packages
-- `pnpm run build` — typecheck + build all packages
-- `pnpm --filter @workspace/api-spec run codegen` — regenerate API hooks and Zod schemas from OpenAPI spec
-- `pnpm --filter @workspace/db run push` — push DB schema changes (dev only)
-- `pnpm --filter @workspace/api-server run dev` — run API server locally
+## Common commands
 
-See the `pnpm-workspace` skill for workspace structure, TypeScript setup, and package details.
+- Regenerate API hooks/schemas after editing `lib/api-spec/openapi.yaml`:
+  `pnpm --filter @workspace/api-spec run codegen`
+- Push DB schema after editing `lib/db/src/schema/*.ts`:
+  `pnpm --filter @workspace/db run push`
+- Typecheck composite libs: `pnpm run typecheck:libs`
+- Typecheck the API server: `pnpm --filter @workspace/api-server run typecheck`
+
+## Notes
+
+- All AI endpoints are synchronous POSTs. The frontend shows a "thinking" disabled state while the call runs (~10–30s).
+- Risk scores: 0–25 low, 26–50 medium, 51–75 high, 76–100 critical.
+- Seed data covers a US Series B financing matter, an India employment dispute, and a UK retail lease renewal.
