@@ -37,61 +37,141 @@ import {
 import { Badge } from "@/components/ui/badge";
 
 type PlanTier = "solo" | "firm" | "enterprise";
+type Region = "us" | "uk" | "india";
 
-const PLAN_TIERS: Array<{
+const REGION_META: Record<Region, { label: string; flag: string; currency: string; salesEmail: string }> = {
+  us: { label: "United States", flag: "US", currency: "USD", salesEmail: "sales@lexai.app" },
+  uk: { label: "United Kingdom", flag: "UK", currency: "GBP", salesEmail: "sales.uk@lexai.app" },
+  india: { label: "India", flag: "IN", currency: "INR", salesEmail: "sales.in@lexai.app" },
+};
+
+const PLAN_PRICING: Record<PlanTier, Record<Region, { price: string; cadence: string }>> = {
+  solo: {
+    us: { price: "$49", cadence: "/ month" },
+    uk: { price: "£39", cadence: "/ month" },
+    india: { price: "₹3,999", cadence: "/ month" },
+  },
+  firm: {
+    us: { price: "$199", cadence: "/ month" },
+    uk: { price: "£159", cadence: "/ month" },
+    india: { price: "₹15,999", cadence: "/ month" },
+  },
+  enterprise: {
+    us: { price: "Custom", cadence: "" },
+    uk: { price: "Custom", cadence: "" },
+    india: { price: "Custom", cadence: "" },
+  },
+};
+
+const REGION_FEATURES: Record<Region, { taxNote: string; lawNote: string }> = {
+  us: {
+    taxNote: "Prices in USD, exclusive of applicable state sales tax.",
+    lawNote: "Drafting & analysis tuned to US federal and state law (UCC, Reg D, Delaware GCL, NLRA).",
+  },
+  uk: {
+    taxNote: "Prices in GBP, exclusive of UK VAT.",
+    lawNote: "Drafting & analysis tuned to England & Wales (Companies Act 2006, Employment Rights Act 1996, GDPR/UK GDPR).",
+  },
+  india: {
+    taxNote: "Prices in INR, exclusive of 18% GST.",
+    lawNote: "Drafting & analysis tuned to Indian law (ICA 1872, Companies Act 2013, IT Act 2000, DPDP Act 2023).",
+  },
+};
+
+const PLAN_BASE: Array<{
   id: PlanTier;
   name: string;
-  price: string;
-  cadence: string;
   tagline: string;
-  features: string[];
+  features: Record<Region, string[]>;
   cta: string;
   highlighted?: boolean;
 }> = [
   {
     id: "solo",
     name: "Solo",
-    price: "$49",
-    cadence: "/ month",
     tagline: "For solo lawyers building a modern practice.",
-    features: [
-      "Up to 25 active matters",
-      "Unlimited contract drafting",
-      "Document & risk analysis",
-      "Single jurisdiction",
-      "Email support",
-    ],
+    features: {
+      us: [
+        "Up to 25 active matters",
+        "Unlimited contract drafting (US law)",
+        "Document & risk analysis",
+        "Single state jurisdiction",
+        "Email support",
+      ],
+      uk: [
+        "Up to 25 active matters",
+        "Unlimited contract drafting (E&W law)",
+        "Document & risk analysis",
+        "Single jurisdiction",
+        "Email support",
+      ],
+      india: [
+        "Up to 25 active matters",
+        "Unlimited contract drafting (Indian law)",
+        "Document & risk analysis",
+        "Single jurisdiction",
+        "Email support",
+      ],
+    },
     cta: "Choose Solo",
   },
   {
     id: "firm",
     name: "Firm",
-    price: "$199",
-    cadence: "/ month",
     tagline: "For boutique firms running multi-matter workflows.",
-    features: [
-      "Unlimited matters & contracts",
-      "All AI features included",
-      "Multi-jurisdiction (US / UK / IN)",
-      "Client brief generator",
-      "Priority support",
-    ],
+    features: {
+      us: [
+        "Unlimited matters & contracts",
+        "All AI features included",
+        "Multi-state + UK / India research",
+        "Client brief generator",
+        "Priority support",
+      ],
+      uk: [
+        "Unlimited matters & contracts",
+        "All AI features included",
+        "E&W, Scotland, US & India research",
+        "Client brief generator",
+        "Priority support",
+      ],
+      india: [
+        "Unlimited matters & contracts",
+        "All AI features included",
+        "India + UK / US research",
+        "Client brief generator",
+        "Priority support",
+      ],
+    },
     cta: "Choose Firm",
     highlighted: true,
   },
   {
     id: "enterprise",
     name: "Enterprise",
-    price: "Custom",
-    cadence: "",
     tagline: "For in-house legal teams with bespoke needs.",
-    features: [
-      "Everything in Firm",
-      "SSO & advanced permissions",
-      "Custom data residency",
-      "Dedicated success manager",
-      "Onboarding & training",
-    ],
+    features: {
+      us: [
+        "Everything in Firm",
+        "SSO (Okta, Azure AD)",
+        "US data residency",
+        "Dedicated success manager",
+        "Onboarding & training",
+      ],
+      uk: [
+        "Everything in Firm",
+        "SSO (Okta, Azure AD)",
+        "EU/UK data residency",
+        "Dedicated success manager",
+        "Onboarding & training",
+      ],
+      india: [
+        "Everything in Firm",
+        "SSO (Okta, Azure AD)",
+        "India data residency (Mumbai)",
+        "Dedicated success manager",
+        "Onboarding & training",
+      ],
+    },
     cta: "Talk to sales",
   },
 ];
@@ -107,8 +187,15 @@ export default function Settings() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [pricingOpen, setPricingOpen] = useState(false);
+  const [pricingRegion, setPricingRegion] = useState<Region>("us");
 
   const { data: settings, isLoading } = useGetSettings();
+
+  useEffect(() => {
+    if (settings?.defaultJurisdiction) {
+      setPricingRegion(settings.defaultJurisdiction as Region);
+    }
+  }, [settings?.defaultJurisdiction]);
 
   const updateSettings = useUpdateSettings({
     mutation: {
@@ -310,9 +397,33 @@ export default function Settings() {
             </DialogDescription>
           </DialogHeader>
 
+          <div className="flex items-center justify-between gap-3 rounded-md border bg-muted/30 p-2 mt-2">
+            <span className="text-xs font-medium text-muted-foreground pl-2">Billing region</span>
+            <div className="flex gap-1">
+              {(Object.keys(REGION_META) as Region[]).map((r) => (
+                <button
+                  key={r}
+                  type="button"
+                  onClick={() => setPricingRegion(r)}
+                  className={cn(
+                    "px-3 py-1.5 rounded-md text-xs font-semibold tracking-wide transition-colors",
+                    pricingRegion === r
+                      ? "bg-primary text-primary-foreground"
+                      : "text-muted-foreground hover:bg-muted"
+                  )}
+                  data-testid={`button-region-${r}`}
+                >
+                  {REGION_META[r].flag} · {REGION_META[r].currency}
+                </button>
+              ))}
+            </div>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
-            {PLAN_TIERS.map((tier) => {
+            {PLAN_BASE.map((tier) => {
               const isCurrent = settings?.plan === tier.id;
+              const pricing = PLAN_PRICING[tier.id][pricingRegion];
+              const features = tier.features[pricingRegion];
               return (
                 <div
                   key={tier.id}
@@ -334,13 +445,13 @@ export default function Settings() {
                     <p className="text-xs text-muted-foreground mt-1 min-h-[2.5rem]">{tier.tagline}</p>
                   </div>
                   <div className="mb-4 flex items-baseline gap-1">
-                    <span className="font-serif text-3xl font-bold text-foreground">{tier.price}</span>
-                    {tier.cadence && (
-                      <span className="text-sm text-muted-foreground">{tier.cadence}</span>
+                    <span className="font-serif text-3xl font-bold text-foreground">{pricing.price}</span>
+                    {pricing.cadence && (
+                      <span className="text-sm text-muted-foreground">{pricing.cadence}</span>
                     )}
                   </div>
                   <ul className="space-y-2 mb-6 flex-1">
-                    {tier.features.map((f) => (
+                    {features.map((f) => (
                       <li key={f} className="flex items-start gap-2 text-sm">
                         <Check size={14} className="text-primary mt-0.5 shrink-0" />
                         <span className="text-foreground/80">{f}</span>
@@ -353,8 +464,7 @@ export default function Settings() {
                     disabled={isCurrent || updateSettings.isPending}
                     onClick={() => {
                       if (tier.id === "enterprise") {
-                        window.location.href =
-                          "mailto:sales@lexai.app?subject=LexAI Enterprise inquiry";
+                        window.location.href = `mailto:${REGION_META[pricingRegion].salesEmail}?subject=LexAI Enterprise inquiry (${REGION_META[pricingRegion].label})`;
                         return;
                       }
                       updateSettings.mutate(
@@ -362,13 +472,14 @@ export default function Settings() {
                           data: {
                             firmName: form.getValues("firmName") || undefined,
                             attorneyName: form.getValues("attorneyName") || undefined,
-                            defaultJurisdiction: form.getValues("defaultJurisdiction"),
+                            defaultJurisdiction: pricingRegion,
                             plan: tier.id,
                           },
                         },
                         {
                           onSuccess: () => {
                             form.setValue("plan", tier.id);
+                            form.setValue("defaultJurisdiction", pricingRegion);
                             setPricingOpen(false);
                           },
                         }
@@ -387,9 +498,10 @@ export default function Settings() {
             })}
           </div>
 
-          <DialogFooter className="text-xs text-muted-foreground sm:justify-start mt-2">
-            Prices in USD. Annual billing available for Firm and Enterprise — contact sales for a 15% discount.
-          </DialogFooter>
+          <div className="mt-2 space-y-1 text-xs text-muted-foreground">
+            <p>{REGION_FEATURES[pricingRegion].lawNote}</p>
+            <p>{REGION_FEATURES[pricingRegion].taxNote} Annual billing on Firm and Enterprise saves 15%.</p>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
