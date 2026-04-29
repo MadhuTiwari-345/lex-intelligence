@@ -1,9 +1,9 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useQueryClient } from "@tanstack/react-query";
-import { Save, Building2, User, Globe, Zap } from "lucide-react";
+import { Save, Building2, User, Globe, Zap, Check, Sparkles } from "lucide-react";
 
 import { 
   useGetSettings, 
@@ -16,6 +16,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
 import {
   Form,
   FormControl,
@@ -25,6 +26,75 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+
+type PlanTier = "solo" | "firm" | "enterprise";
+
+const PLAN_TIERS: Array<{
+  id: PlanTier;
+  name: string;
+  price: string;
+  cadence: string;
+  tagline: string;
+  features: string[];
+  cta: string;
+  highlighted?: boolean;
+}> = [
+  {
+    id: "solo",
+    name: "Solo",
+    price: "$49",
+    cadence: "/ month",
+    tagline: "For solo lawyers building a modern practice.",
+    features: [
+      "Up to 25 active matters",
+      "Unlimited contract drafting",
+      "Document & risk analysis",
+      "Single jurisdiction",
+      "Email support",
+    ],
+    cta: "Choose Solo",
+  },
+  {
+    id: "firm",
+    name: "Firm",
+    price: "$199",
+    cadence: "/ month",
+    tagline: "For boutique firms running multi-matter workflows.",
+    features: [
+      "Unlimited matters & contracts",
+      "All AI features included",
+      "Multi-jurisdiction (US / UK / IN)",
+      "Client brief generator",
+      "Priority support",
+    ],
+    cta: "Choose Firm",
+    highlighted: true,
+  },
+  {
+    id: "enterprise",
+    name: "Enterprise",
+    price: "Custom",
+    cadence: "",
+    tagline: "For in-house legal teams with bespoke needs.",
+    features: [
+      "Everything in Firm",
+      "SSO & advanced permissions",
+      "Custom data residency",
+      "Dedicated success manager",
+      "Onboarding & training",
+    ],
+    cta: "Talk to sales",
+  },
+];
 
 const formSchema = z.object({
   firmName: z.string().optional(),
@@ -36,6 +106,7 @@ const formSchema = z.object({
 export default function Settings() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
+  const [pricingOpen, setPricingOpen] = useState(false);
 
   const { data: settings, isLoading } = useGetSettings();
 
@@ -210,7 +281,9 @@ export default function Settings() {
                 <Button
                   variant="outline"
                   type="button"
+                  onClick={() => setPricingOpen(true)}
                   className="border-primary/50 text-primary hover:bg-primary/10"
+                  data-testid="button-upgrade-plan"
                 >
                   Upgrade Plan
                 </Button>
@@ -225,6 +298,100 @@ export default function Settings() {
 
         </form>
       </Form>
+
+      <Dialog open={pricingOpen} onOpenChange={setPricingOpen}>
+        <DialogContent className="max-w-4xl">
+          <DialogHeader>
+            <DialogTitle className="font-serif text-2xl flex items-center gap-2">
+              <Sparkles className="text-primary" size={20} /> Choose your LexAI plan
+            </DialogTitle>
+            <DialogDescription>
+              Built for solo lawyers, boutique firms, and in-house legal teams. Switch or cancel anytime.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
+            {PLAN_TIERS.map((tier) => {
+              const isCurrent = settings?.plan === tier.id;
+              return (
+                <div
+                  key={tier.id}
+                  className={cn(
+                    "relative flex flex-col rounded-lg border bg-card p-5 transition-all",
+                    tier.highlighted
+                      ? "border-primary shadow-md ring-1 ring-primary/30"
+                      : "border-border"
+                  )}
+                  data-testid={`tier-card-${tier.id}`}
+                >
+                  {tier.highlighted && (
+                    <Badge className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground hover:bg-primary">
+                      Most popular
+                    </Badge>
+                  )}
+                  <div className="mb-4">
+                    <h3 className="font-serif text-xl font-bold text-foreground">{tier.name}</h3>
+                    <p className="text-xs text-muted-foreground mt-1 min-h-[2.5rem]">{tier.tagline}</p>
+                  </div>
+                  <div className="mb-4 flex items-baseline gap-1">
+                    <span className="font-serif text-3xl font-bold text-foreground">{tier.price}</span>
+                    {tier.cadence && (
+                      <span className="text-sm text-muted-foreground">{tier.cadence}</span>
+                    )}
+                  </div>
+                  <ul className="space-y-2 mb-6 flex-1">
+                    {tier.features.map((f) => (
+                      <li key={f} className="flex items-start gap-2 text-sm">
+                        <Check size={14} className="text-primary mt-0.5 shrink-0" />
+                        <span className="text-foreground/80">{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  <Button
+                    type="button"
+                    variant={tier.highlighted ? "default" : "outline"}
+                    disabled={isCurrent || updateSettings.isPending}
+                    onClick={() => {
+                      if (tier.id === "enterprise") {
+                        window.location.href =
+                          "mailto:sales@lexai.app?subject=LexAI Enterprise inquiry";
+                        return;
+                      }
+                      updateSettings.mutate(
+                        {
+                          data: {
+                            firmName: form.getValues("firmName") || undefined,
+                            attorneyName: form.getValues("attorneyName") || undefined,
+                            defaultJurisdiction: form.getValues("defaultJurisdiction"),
+                            plan: tier.id,
+                          },
+                        },
+                        {
+                          onSuccess: () => {
+                            form.setValue("plan", tier.id);
+                            setPricingOpen(false);
+                          },
+                        }
+                      );
+                    }}
+                    className={cn(
+                      "w-full",
+                      !tier.highlighted && "border-primary/50 text-primary hover:bg-primary/10"
+                    )}
+                    data-testid={`button-select-${tier.id}`}
+                  >
+                    {isCurrent ? "Current plan" : tier.cta}
+                  </Button>
+                </div>
+              );
+            })}
+          </div>
+
+          <DialogFooter className="text-xs text-muted-foreground sm:justify-start mt-2">
+            Prices in USD. Annual billing available for Firm and Enterprise — contact sales for a 15% discount.
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
