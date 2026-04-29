@@ -207,7 +207,13 @@ export default function Settings() {
                   <p className="font-semibold text-foreground capitalize">{settings?.plan} Plan</p>
                   <p className="text-sm text-muted-foreground mt-1">Unlimited matters, contracts, and AI generation.</p>
                 </div>
-                <Button variant="outline" type="button" disabled>Upgrade Plan</Button>
+                <Button
+                  variant="outline"
+                  type="button"
+                  className="border-primary/50 text-primary hover:bg-primary/10"
+                >
+                  Upgrade Plan
+                </Button>
               </div>
             </CardContent>
             <CardFooter className="bg-muted/10 border-t justify-end py-4">
