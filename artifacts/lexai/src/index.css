@@ -4,7 +4,7 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Inter:wght@100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&family=Mulish:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
 @theme inline {
   --color-background: hsl(var(--background));
@@ -68,67 +68,67 @@
   --radius-xl: calc(var(--radius) + 4px);
 }
 
-/* LIGHT MODE */
+/* LIGHT MODE — Copper & Cream / Boutique IN */
 :root {
-  --button-outline: rgba(0,0,0, .10);
-  --badge-outline: rgba(0,0,0, .05);
+  --button-outline: rgba(42, 24, 16, .10);
+  --badge-outline: rgba(42, 24, 16, .06);
 
   --opaque-button-border-intensity: -8;
 
-  --elevate-1: rgba(0,0,0, .03);
-  --elevate-2: rgba(0,0,0, .08);
+  --elevate-1: rgba(42, 24, 16, .03);
+  --elevate-2: rgba(42, 24, 16, .07);
 
-  /* Deep sophisticated palette */
-  --background: 210 40% 98%; /* slate-50 */
-  --foreground: 222 47% 11%; /* slate-900 */
-  --border: 214 32% 91%; /* slate-200 */
-  
-  --card: 0 0% 100%;
-  --card-foreground: 222 47% 11%;
-  --card-border: 214 32% 91%;
+  /* Warm cream + espresso + copper palette */
+  --background: 42 56% 95%;        /* cream */
+  --foreground: 18 47% 12%;        /* espresso */
+  --border: 36 28% 82%;            /* soft taupe */
 
-  --sidebar: 222 47% 11%; /* slate-900 for a solid, trustworthy sidebar */
-  --sidebar-foreground: 210 40% 98%;
-  --sidebar-border: 222 47% 11%;
-  --sidebar-primary: 210 40% 98%;
-  --sidebar-primary-foreground: 222 47% 11%;
-  --sidebar-accent: 217 33% 17%;
-  --sidebar-accent-foreground: 210 40% 98%;
-  --sidebar-ring: 214 32% 91%;
+  --card: 40 50% 98%;              /* ivory */
+  --card-foreground: 18 47% 12%;
+  --card-border: 36 28% 82%;
 
-  --popover: 0 0% 100%;
-  --popover-foreground: 222 47% 11%;
-  --popover-border: 214 32% 91%;
+  --sidebar: 18 47% 12%;           /* deep espresso */
+  --sidebar-foreground: 42 50% 92%;
+  --sidebar-border: 18 40% 18%;
+  --sidebar-primary: 22 64% 50%;   /* copper */
+  --sidebar-primary-foreground: 42 56% 96%;
+  --sidebar-accent: 18 35% 18%;
+  --sidebar-accent-foreground: 42 50% 92%;
+  --sidebar-ring: 22 64% 50%;
 
-  --primary: 222 47% 11%;
-  --primary-foreground: 210 40% 98%;
-  
-  --secondary: 214 32% 91%;
-  --secondary-foreground: 222 47% 11%;
+  --popover: 40 50% 98%;
+  --popover-foreground: 18 47% 12%;
+  --popover-border: 36 28% 82%;
 
-  --muted: 210 40% 96%;
-  --muted-foreground: 215 16% 47%;
+  --primary: 22 64% 47%;           /* copper-orange */
+  --primary-foreground: 42 56% 96%;
 
-  --accent: 210 40% 96%;
-  --accent-foreground: 222 47% 11%;
+  --secondary: 38 38% 88%;         /* sand */
+  --secondary-foreground: 18 47% 12%;
 
-  --destructive: 0 84% 60%;
-  --destructive-foreground: 210 40% 98%;
+  --muted: 40 35% 90%;             /* warm muted */
+  --muted-foreground: 25 18% 38%;  /* warm grey-brown */
 
-  --input: 214 32% 91%;
-  --ring: 222 47% 11%;
-  
-  --chart-1: 222 47% 11%;
-  --chart-2: 215 16% 47%;
-  --chart-3: 214 32% 91%;
-  --chart-4: 210 40% 96%;
-  --chart-5: 217 33% 17%;
+  --accent: 41 65% 53%;            /* gold */
+  --accent-foreground: 18 47% 12%;
 
-  --app-font-sans: 'Inter', sans-serif;
-  --app-font-serif: 'Playfair Display', serif;
-  --app-font-mono: 'Menlo', 'Monaco', 'Courier New', monospace;
-  
-  --radius: 0.375rem; /* Slightly sharper corners for a more formal look */
+  --destructive: 4 70% 45%;        /* rich brick */
+  --destructive-foreground: 42 56% 96%;
+
+  --input: 36 28% 82%;
+  --ring: 22 64% 47%;
+
+  --chart-1: 22 64% 47%;           /* copper */
+  --chart-2: 41 65% 53%;           /* gold */
+  --chart-3: 70 28% 38%;           /* olive */
+  --chart-4: 18 47% 12%;           /* espresso */
+  --chart-5: 25 30% 50%;           /* warm taupe */
+
+  --app-font-sans: 'Mulish', system-ui, sans-serif;
+  --app-font-serif: 'Libre Baskerville', 'Iowan Old Style', Georgia, serif;
+  --app-font-mono: 'IBM Plex Mono', 'Menlo', 'Monaco', monospace;
+
+  --radius: 0.5rem;
   
   --shadow-2xs: 0px 2px 0px 0px hsl(202 89% 53% / 0.00);
   --shadow-xs: 0px 2px 0px 0px hsl(202 89% 53% / 0.00);
@@ -151,58 +151,58 @@
 }
 
 .dark {
-  --button-outline: rgba(255,255,255, .10);
-  --badge-outline: rgba(255,255,255, .05);
+  --button-outline: rgba(255, 240, 225, .10);
+  --badge-outline: rgba(255, 240, 225, .05);
 
   --opaque-button-border-intensity: 9;
 
-  --elevate-1: rgba(255,255,255, .04);
-  --elevate-2: rgba(255,255,255, .09);
+  --elevate-1: rgba(255, 240, 225, .04);
+  --elevate-2: rgba(255, 240, 225, .09);
 
-  --background: 222 47% 11%; /* slate-900 */
-  --foreground: 210 40% 98%; /* slate-50 */
-  --border: 217 33% 17%; /* slate-800 */
-  
-  --card: 222 47% 11%;
-  --card-foreground: 210 40% 98%;
-  --card-border: 217 33% 17%;
+  --background: 18 45% 8%;         /* deep espresso */
+  --foreground: 42 50% 92%;        /* cream */
+  --border: 18 30% 18%;
 
-  --sidebar: 224 71% 4%; /* Even darker for sidebar */
-  --sidebar-foreground: 210 40% 98%;
-  --sidebar-border: 217 33% 17%;
-  --sidebar-primary: 210 40% 98%;
-  --sidebar-primary-foreground: 222 47% 11%;
-  --sidebar-accent: 217 33% 17%;
-  --sidebar-accent-foreground: 210 40% 98%;
-  --sidebar-ring: 214 32% 91%;
+  --card: 18 40% 11%;
+  --card-foreground: 42 50% 92%;
+  --card-border: 18 30% 18%;
 
-  --popover: 222 47% 11%;
-  --popover-foreground: 210 40% 98%;
-  --popover-border: 217 33% 17%;
+  --sidebar: 18 50% 6%;
+  --sidebar-foreground: 42 50% 92%;
+  --sidebar-border: 18 30% 14%;
+  --sidebar-primary: 22 64% 55%;
+  --sidebar-primary-foreground: 18 47% 8%;
+  --sidebar-accent: 18 35% 14%;
+  --sidebar-accent-foreground: 42 50% 92%;
+  --sidebar-ring: 22 64% 55%;
 
-  --primary: 210 40% 98%;
-  --primary-foreground: 222 47% 11%;
-  
-  --secondary: 217 33% 17%;
-  --secondary-foreground: 210 40% 98%;
+  --popover: 18 40% 11%;
+  --popover-foreground: 42 50% 92%;
+  --popover-border: 18 30% 18%;
 
-  --muted: 217 33% 17%;
-  --muted-foreground: 215 20.2% 65.1%;
+  --primary: 22 70% 55%;
+  --primary-foreground: 18 47% 8%;
 
-  --accent: 217 33% 17%;
-  --accent-foreground: 210 40% 98%;
+  --secondary: 18 30% 18%;
+  --secondary-foreground: 42 50% 92%;
 
-  --destructive: 0 62.8% 30.6%;
-  --destructive-foreground: 210 40% 98%;
+  --muted: 18 28% 16%;
+  --muted-foreground: 36 22% 65%;
 
-  --input: 217 33% 17%;
-  --ring: 214 32% 91%;
-  
-  --chart-1: 210 40% 98%;
-  --chart-2: 215 20.2% 65.1%;
-  --chart-3: 217 33% 17%;
-  --chart-4: 214 32% 91%;
-  --chart-5: 222 47% 11%;
+  --accent: 41 65% 53%;
+  --accent-foreground: 18 47% 8%;
+
+  --destructive: 4 65% 50%;
+  --destructive-foreground: 42 50% 92%;
+
+  --input: 18 30% 18%;
+  --ring: 22 64% 55%;
+
+  --chart-1: 22 70% 55%;
+  --chart-2: 41 65% 60%;
+  --chart-3: 70 30% 50%;
+  --chart-4: 42 50% 92%;
+  --chart-5: 25 30% 60%;
 }
 
 @layer base {
