@@ -13,34 +13,46 @@ import {
 
 const router: IRouter = Router();
 
-router.get("/dashboard/summary", async (_req, res): Promise<void> => {
+router.get("/dashboard/summary", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const now = new Date();
 
   const [{ count: matterCount }] = await db
     .select({ count: sql<number>`count(*)::int` })
-    .from(mattersTable);
+    .from(mattersTable)
+    .where(eq(mattersTable.userId, userId));
   const [{ count: activeMatterCount }] = await db
     .select({ count: sql<number>`count(*)::int` })
     .from(mattersTable)
-    .where(eq(mattersTable.status, "active"));
+    .where(
+      and(eq(mattersTable.userId, userId), eq(mattersTable.status, "active")),
+    );
 
   const [{ count: contractCount }] = await db
     .select({ count: sql<number>`count(*)::int` })
-    .from(contractsTable);
+    .from(contractsTable)
+    .where(eq(contractsTable.userId, userId));
   const [{ count: draftContractCount }] = await db
     .select({ count: sql<number>`count(*)::int` })
     .from(contractsTable)
-    .where(eq(contractsTable.status, "draft"));
+    .where(
+      and(
+        eq(contractsTable.userId, userId),
+        eq(contractsTable.status, "draft"),
+      ),
+    );
 
   const [{ count: documentCount }] = await db
     .select({ count: sql<number>`count(*)::int` })
-    .from(documentsTable);
+    .from(documentsTable)
+    .where(eq(documentsTable.userId, userId));
 
   const [{ count: upcomingDeadlineCount }] = await db
     .select({ count: sql<number>`count(*)::int` })
     .from(deadlinesTable)
     .where(
       and(
+        eq(deadlinesTable.userId, userId),
         eq(deadlinesTable.status, "upcoming"),
         gte(deadlinesTable.dueDate, now),
       ),
@@ -50,6 +62,7 @@ router.get("/dashboard/summary", async (_req, res): Promise<void> => {
     .from(deadlinesTable)
     .where(
       and(
+        eq(deadlinesTable.userId, userId),
         eq(deadlinesTable.status, "upcoming"),
         lt(deadlinesTable.dueDate, now),
       ),
@@ -57,10 +70,12 @@ router.get("/dashboard/summary", async (_req, res): Promise<void> => {
 
   const [{ count: researchCount }] = await db
     .select({ count: sql<number>`count(*)::int` })
-    .from(researchQueriesTable);
+    .from(researchQueriesTable)
+    .where(eq(researchQueriesTable.userId, userId));
   const [{ count: briefCount }] = await db
     .select({ count: sql<number>`count(*)::int` })
-    .from(briefsTable);
+    .from(briefsTable)
+    .where(eq(briefsTable.userId, userId));
 
   const [contractRisk] = await db
     .select({
@@ -68,24 +83,43 @@ router.get("/dashboard/summary", async (_req, res): Promise<void> => {
       high: sql<number>`coalesce(sum(case when ${contractsTable.riskScore} >= 51 then 1 else 0 end), 0)::int`,
     })
     .from(contractsTable)
-    .where(isNotNull(contractsTable.riskScore));
+    .where(
+      and(
+        eq(contractsTable.userId, userId),
+        isNotNull(contractsTable.riskScore),
+      ),
+    );
   const [documentRisk] = await db
     .select({
       avg: sql<number>`coalesce(avg(${documentsTable.riskScore}), 0)::float`,
       high: sql<number>`coalesce(sum(case when ${documentsTable.riskScore} >= 51 then 1 else 0 end), 0)::int`,
     })
     .from(documentsTable)
-    .where(isNotNull(documentsTable.riskScore));
+    .where(
+      and(
+        eq(documentsTable.userId, userId),
+        isNotNull(documentsTable.riskScore),
+      ),
+    );
 
-  // Combined average across both, weighted by simple count
   const [contractCountWithScore] = await db
     .select({ count: sql<number>`count(*)::int` })
     .from(contractsTable)
-    .where(isNotNull(contractsTable.riskScore));
+    .where(
+      and(
+        eq(contractsTable.userId, userId),
+        isNotNull(contractsTable.riskScore),
+      ),
+    );
   const [documentCountWithScore] = await db
     .select({ count: sql<number>`count(*)::int` })
     .from(documentsTable)
-    .where(isNotNull(documentsTable.riskScore));
+    .where(
+      and(
+        eq(documentsTable.userId, userId),
+        isNotNull(documentsTable.riskScore),
+      ),
+    );
 
   const totalScored =
     contractCountWithScore.count + documentCountWithScore.count;
@@ -111,7 +145,8 @@ router.get("/dashboard/summary", async (_req, res): Promise<void> => {
   });
 });
 
-router.get("/dashboard/activity", async (_req, res): Promise<void> => {
+router.get("/dashboard/activity", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const matters = await db
     .select({
       id: mattersTable.id,
@@ -120,6 +155,7 @@ router.get("/dashboard/activity", async (_req, res): Promise<void> => {
       updatedAt: mattersTable.updatedAt,
     })
     .from(mattersTable)
+    .where(eq(mattersTable.userId, userId))
     .orderBy(desc(mattersTable.updatedAt))
     .limit(10);
   const contracts = await db
@@ -131,6 +167,7 @@ router.get("/dashboard/activity", async (_req, res): Promise<void> => {
       updatedAt: contractsTable.updatedAt,
     })
     .from(contractsTable)
+    .where(eq(contractsTable.userId, userId))
     .orderBy(desc(contractsTable.updatedAt))
     .limit(10);
   const documents = await db
@@ -141,6 +178,7 @@ router.get("/dashboard/activity", async (_req, res): Promise<void> => {
       createdAt: documentsTable.createdAt,
     })
     .from(documentsTable)
+    .where(eq(documentsTable.userId, userId))
     .orderBy(desc(documentsTable.createdAt))
     .limit(10);
   const research = await db
@@ -151,6 +189,7 @@ router.get("/dashboard/activity", async (_req, res): Promise<void> => {
       createdAt: researchQueriesTable.createdAt,
     })
     .from(researchQueriesTable)
+    .where(eq(researchQueriesTable.userId, userId))
     .orderBy(desc(researchQueriesTable.createdAt))
     .limit(10);
   const briefs = await db
@@ -161,6 +200,7 @@ router.get("/dashboard/activity", async (_req, res): Promise<void> => {
       createdAt: briefsTable.createdAt,
     })
     .from(briefsTable)
+    .where(eq(briefsTable.userId, userId))
     .orderBy(desc(briefsTable.createdAt))
     .limit(10);
   const deadlines = await db
@@ -171,6 +211,7 @@ router.get("/dashboard/activity", async (_req, res): Promise<void> => {
       createdAt: deadlinesTable.createdAt,
     })
     .from(deadlinesTable)
+    .where(eq(deadlinesTable.userId, userId))
     .orderBy(desc(deadlinesTable.createdAt))
     .limit(10);
 
@@ -239,7 +280,8 @@ router.get("/dashboard/activity", async (_req, res): Promise<void> => {
   res.json(items);
 });
 
-router.get("/dashboard/risk-overview", async (_req, res): Promise<void> => {
+router.get("/dashboard/risk-overview", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const bucket = (col: AnyPgColumn) => ({
     low: sql<number>`coalesce(sum(case when ${col} between 0 and 25 then 1 else 0 end), 0)::int`,
     medium: sql<number>`coalesce(sum(case when ${col} between 26 and 50 then 1 else 0 end), 0)::int`,
@@ -249,10 +291,12 @@ router.get("/dashboard/risk-overview", async (_req, res): Promise<void> => {
 
   const [c] = await db
     .select(bucket(contractsTable.riskScore))
-    .from(contractsTable);
+    .from(contractsTable)
+    .where(eq(contractsTable.userId, userId));
   const [d] = await db
     .select(bucket(documentsTable.riskScore))
-    .from(documentsTable);
+    .from(documentsTable)
+    .where(eq(documentsTable.userId, userId));
 
   res.json({
     low: c.low + d.low,

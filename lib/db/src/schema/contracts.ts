@@ -15,6 +15,7 @@ export type RiskFlag = {
 
 export const contractsTable = pgTable("contracts", {
   id: serial("id").primaryKey(),
+  userId: text("user_id"),
   matterId: integer("matter_id"),
   title: text("title").notNull(),
   type: text("type").notNull().default("other"),

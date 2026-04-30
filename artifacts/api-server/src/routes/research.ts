@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { db, researchQueriesTable } from "@workspace/db";
 import {
   CreateResearchQueryBody,
@@ -10,15 +10,18 @@ import { runResearch } from "../lib/ai";
 
 const router: IRouter = Router();
 
-router.get("/research", async (_req, res): Promise<void> => {
+router.get("/research", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const rows = await db
     .select()
     .from(researchQueriesTable)
+    .where(eq(researchQueriesTable.userId, userId))
     .orderBy(desc(researchQueriesTable.createdAt));
   res.json(rows);
 });
 
 router.post("/research", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const parsed = CreateResearchQueryBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -32,6 +35,7 @@ router.post("/research", async (req, res): Promise<void> => {
     const [row] = await db
       .insert(researchQueriesTable)
       .values({
+        userId,
         matterId: parsed.data.matterId ?? null,
         question: parsed.data.question,
         jurisdiction: parsed.data.jurisdiction,
@@ -48,6 +52,7 @@ router.post("/research", async (req, res): Promise<void> => {
 });
 
 router.get("/research/:id", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const params = GetResearchQueryParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -56,7 +61,12 @@ router.get("/research/:id", async (req, res): Promise<void> => {
   const [row] = await db
     .select()
     .from(researchQueriesTable)
-    .where(eq(researchQueriesTable.id, params.data.id));
+    .where(
+      and(
+        eq(researchQueriesTable.id, params.data.id),
+        eq(researchQueriesTable.userId, userId),
+      ),
+    );
   if (!row) {
     res.status(404).json({ error: "Research query not found" });
     return;
@@ -65,6 +75,7 @@ router.get("/research/:id", async (req, res): Promise<void> => {
 });
 
 router.delete("/research/:id", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const params = DeleteResearchQueryParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -72,7 +83,12 @@ router.delete("/research/:id", async (req, res): Promise<void> => {
   }
   const [row] = await db
     .delete(researchQueriesTable)
-    .where(eq(researchQueriesTable.id, params.data.id))
+    .where(
+      and(
+        eq(researchQueriesTable.id, params.data.id),
+        eq(researchQueriesTable.userId, userId),
+      ),
+    )
     .returning();
   if (!row) {
     res.status(404).json({ error: "Research query not found" });

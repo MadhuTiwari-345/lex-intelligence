@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { db, briefsTable } from "@workspace/db";
 import {
   CreateBriefBody,
@@ -10,15 +10,18 @@ import { generateBrief } from "../lib/ai";
 
 const router: IRouter = Router();
 
-router.get("/briefs", async (_req, res): Promise<void> => {
+router.get("/briefs", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const rows = await db
     .select()
     .from(briefsTable)
+    .where(eq(briefsTable.userId, userId))
     .orderBy(desc(briefsTable.createdAt));
   res.json(rows);
 });
 
 router.post("/briefs", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const parsed = CreateBriefBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -32,6 +35,7 @@ router.post("/briefs", async (req, res): Promise<void> => {
     const [row] = await db
       .insert(briefsTable)
       .values({
+        userId,
         matterId: parsed.data.matterId ?? null,
         title: parsed.data.title,
         originalText: parsed.data.originalText,
@@ -48,6 +52,7 @@ router.post("/briefs", async (req, res): Promise<void> => {
 });
 
 router.get("/briefs/:id", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const params = GetBriefParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -56,7 +61,9 @@ router.get("/briefs/:id", async (req, res): Promise<void> => {
   const [row] = await db
     .select()
     .from(briefsTable)
-    .where(eq(briefsTable.id, params.data.id));
+    .where(
+      and(eq(briefsTable.id, params.data.id), eq(briefsTable.userId, userId)),
+    );
   if (!row) {
     res.status(404).json({ error: "Brief not found" });
     return;
@@ -65,6 +72,7 @@ router.get("/briefs/:id", async (req, res): Promise<void> => {
 });
 
 router.delete("/briefs/:id", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const params = DeleteBriefParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -72,7 +80,9 @@ router.delete("/briefs/:id", async (req, res): Promise<void> => {
   }
   const [row] = await db
     .delete(briefsTable)
-    .where(eq(briefsTable.id, params.data.id))
+    .where(
+      and(eq(briefsTable.id, params.data.id), eq(briefsTable.userId, userId)),
+    )
     .returning();
   if (!row) {
     res.status(404).json({ error: "Brief not found" });

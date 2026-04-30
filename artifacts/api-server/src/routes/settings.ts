@@ -1,16 +1,21 @@
 import { Router, type IRouter } from "express";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db, settingsTable } from "@workspace/db";
 import { UpdateSettingsBody } from "@workspace/api-zod";
 
 const router: IRouter = Router();
 
-async function ensureSettings() {
-  const [existing] = await db.select().from(settingsTable).limit(1);
+async function ensureSettings(userId: string) {
+  const [existing] = await db
+    .select()
+    .from(settingsTable)
+    .where(eq(settingsTable.userId, userId))
+    .limit(1);
   if (existing) return existing;
   const [created] = await db
     .insert(settingsTable)
     .values({
+      userId,
       defaultJurisdiction: "us",
       plan: "solo",
     })
@@ -18,22 +23,26 @@ async function ensureSettings() {
   return created;
 }
 
-router.get("/settings", async (_req, res): Promise<void> => {
-  const row = await ensureSettings();
+router.get("/settings", async (req, res): Promise<void> => {
+  const userId = req.userId!;
+  const row = await ensureSettings(userId);
   res.json(row);
 });
 
 router.patch("/settings", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const parsed = UpdateSettingsBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
     return;
   }
-  const existing = await ensureSettings();
+  const existing = await ensureSettings(userId);
   const [row] = await db
     .update(settingsTable)
     .set(parsed.data)
-    .where(eq(settingsTable.id, existing.id))
+    .where(
+      and(eq(settingsTable.id, existing.id), eq(settingsTable.userId, userId)),
+    )
     .returning();
   res.json(row);
 });

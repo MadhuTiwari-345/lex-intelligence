@@ -16,6 +16,7 @@ export type ClauseAnalysis = {
 
 export const documentsTable = pgTable("documents", {
   id: serial("id").primaryKey(),
+  userId: text("user_id"),
   matterId: integer("matter_id"),
   title: text("title").notNull(),
   docType: text("doc_type"),

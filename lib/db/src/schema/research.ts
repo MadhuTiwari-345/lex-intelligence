@@ -18,6 +18,7 @@ export type Citation = {
 
 export const researchQueriesTable = pgTable("research_queries", {
   id: serial("id").primaryKey(),
+  userId: text("user_id"),
   matterId: integer("matter_id"),
   question: text("question").notNull(),
   jurisdiction: text("jurisdiction").notNull().default("us"),

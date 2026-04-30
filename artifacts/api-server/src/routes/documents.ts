@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { desc, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { db, documentsTable } from "@workspace/db";
 import {
   CreateDocumentBody,
@@ -13,26 +13,25 @@ import { analyzeDocumentContent } from "../lib/ai";
 const router: IRouter = Router();
 
 router.get("/documents", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const params = ListDocumentsQueryParams.safeParse(req.query);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
     return;
   }
-  const rows =
-    params.data.matterId !== undefined
-      ? await db
-          .select()
-          .from(documentsTable)
-          .where(eq(documentsTable.matterId, params.data.matterId))
-          .orderBy(desc(documentsTable.createdAt))
-      : await db
-          .select()
-          .from(documentsTable)
-          .orderBy(desc(documentsTable.createdAt));
+  const conds = [eq(documentsTable.userId, userId)];
+  if (params.data.matterId !== undefined)
+    conds.push(eq(documentsTable.matterId, params.data.matterId));
+  const rows = await db
+    .select()
+    .from(documentsTable)
+    .where(and(...conds))
+    .orderBy(desc(documentsTable.createdAt));
   res.json(rows);
 });
 
 router.post("/documents", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const parsed = CreateDocumentBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -41,6 +40,7 @@ router.post("/documents", async (req, res): Promise<void> => {
   const [row] = await db
     .insert(documentsTable)
     .values({
+      userId,
       matterId: parsed.data.matterId ?? null,
       title: parsed.data.title,
       docType: parsed.data.docType ?? null,
@@ -52,6 +52,7 @@ router.post("/documents", async (req, res): Promise<void> => {
 });
 
 router.get("/documents/:id", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const params = GetDocumentParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -60,7 +61,12 @@ router.get("/documents/:id", async (req, res): Promise<void> => {
   const [row] = await db
     .select()
     .from(documentsTable)
-    .where(eq(documentsTable.id, params.data.id));
+    .where(
+      and(
+        eq(documentsTable.id, params.data.id),
+        eq(documentsTable.userId, userId),
+      ),
+    );
   if (!row) {
     res.status(404).json({ error: "Document not found" });
     return;
@@ -69,6 +75,7 @@ router.get("/documents/:id", async (req, res): Promise<void> => {
 });
 
 router.delete("/documents/:id", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const params = DeleteDocumentParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -76,7 +83,12 @@ router.delete("/documents/:id", async (req, res): Promise<void> => {
   }
   const [row] = await db
     .delete(documentsTable)
-    .where(eq(documentsTable.id, params.data.id))
+    .where(
+      and(
+        eq(documentsTable.id, params.data.id),
+        eq(documentsTable.userId, userId),
+      ),
+    )
     .returning();
   if (!row) {
     res.status(404).json({ error: "Document not found" });
@@ -86,6 +98,7 @@ router.delete("/documents/:id", async (req, res): Promise<void> => {
 });
 
 router.post("/documents/:id/analyze", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const params = AnalyzeDocumentParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -94,7 +107,12 @@ router.post("/documents/:id/analyze", async (req, res): Promise<void> => {
   const [existing] = await db
     .select()
     .from(documentsTable)
-    .where(eq(documentsTable.id, params.data.id));
+    .where(
+      and(
+        eq(documentsTable.id, params.data.id),
+        eq(documentsTable.userId, userId),
+      ),
+    );
   if (!existing) {
     res.status(404).json({ error: "Document not found" });
     return;
@@ -111,7 +129,12 @@ router.post("/documents/:id/analyze", async (req, res): Promise<void> => {
         riskScore: analysis.riskScore,
         clauseAnalysis: analysis.clauseAnalysis,
       })
-      .where(eq(documentsTable.id, params.data.id))
+      .where(
+        and(
+          eq(documentsTable.id, params.data.id),
+          eq(documentsTable.userId, userId),
+        ),
+      )
       .returning();
     res.json(row);
   } catch (err) {

@@ -1,5 +1,5 @@
 import { Router, type IRouter } from "express";
-import { and, asc, desc, eq, gte } from "drizzle-orm";
+import { and, asc, eq, gte } from "drizzle-orm";
 import { db, deadlinesTable, mattersTable } from "@workspace/db";
 import {
   CreateDeadlineBody,
@@ -11,42 +11,43 @@ import {
 
 const router: IRouter = Router();
 
+const deadlineSelect = {
+  id: deadlinesTable.id,
+  matterId: deadlinesTable.matterId,
+  matterName: mattersTable.name,
+  title: deadlinesTable.title,
+  description: deadlinesTable.description,
+  dueDate: deadlinesTable.dueDate,
+  type: deadlinesTable.type,
+  status: deadlinesTable.status,
+  priority: deadlinesTable.priority,
+  createdAt: deadlinesTable.createdAt,
+};
+
 router.get("/deadlines", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const params = ListDeadlinesQueryParams.safeParse(req.query);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
     return;
   }
-  const conds = [];
+  const conds = [eq(deadlinesTable.userId, userId)];
   if (params.data.status)
     conds.push(eq(deadlinesTable.status, params.data.status));
   if (params.data.matterId !== undefined)
     conds.push(eq(deadlinesTable.matterId, params.data.matterId));
 
-  const baseQuery = db
-    .select({
-      id: deadlinesTable.id,
-      matterId: deadlinesTable.matterId,
-      matterName: mattersTable.name,
-      title: deadlinesTable.title,
-      description: deadlinesTable.description,
-      dueDate: deadlinesTable.dueDate,
-      type: deadlinesTable.type,
-      status: deadlinesTable.status,
-      priority: deadlinesTable.priority,
-      createdAt: deadlinesTable.createdAt,
-    })
+  const rows = await db
+    .select(deadlineSelect)
     .from(deadlinesTable)
-    .leftJoin(mattersTable, eq(deadlinesTable.matterId, mattersTable.id));
-
-  const rows =
-    conds.length > 0
-      ? await baseQuery.where(and(...conds)).orderBy(asc(deadlinesTable.dueDate))
-      : await baseQuery.orderBy(asc(deadlinesTable.dueDate));
+    .leftJoin(mattersTable, eq(deadlinesTable.matterId, mattersTable.id))
+    .where(and(...conds))
+    .orderBy(asc(deadlinesTable.dueDate));
   res.json(rows);
 });
 
 router.post("/deadlines", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const parsed = CreateDeadlineBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -55,6 +56,7 @@ router.post("/deadlines", async (req, res): Promise<void> => {
   const [row] = await db
     .insert(deadlinesTable)
     .values({
+      userId,
       matterId: parsed.data.matterId ?? null,
       title: parsed.data.title,
       description: parsed.data.description ?? null,
@@ -67,30 +69,26 @@ router.post("/deadlines", async (req, res): Promise<void> => {
     ? await db
         .select({ name: mattersTable.name })
         .from(mattersTable)
-        .where(eq(mattersTable.id, row.matterId))
+        .where(
+          and(
+            eq(mattersTable.id, row.matterId),
+            eq(mattersTable.userId, userId),
+          ),
+        )
     : [{ name: null }];
   res.status(201).json({ ...row, matterName: matter?.name ?? null });
 });
 
-router.get("/deadlines/upcoming", async (_req, res): Promise<void> => {
+router.get("/deadlines/upcoming", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const now = new Date();
   const rows = await db
-    .select({
-      id: deadlinesTable.id,
-      matterId: deadlinesTable.matterId,
-      matterName: mattersTable.name,
-      title: deadlinesTable.title,
-      description: deadlinesTable.description,
-      dueDate: deadlinesTable.dueDate,
-      type: deadlinesTable.type,
-      status: deadlinesTable.status,
-      priority: deadlinesTable.priority,
-      createdAt: deadlinesTable.createdAt,
-    })
+    .select(deadlineSelect)
     .from(deadlinesTable)
     .leftJoin(mattersTable, eq(deadlinesTable.matterId, mattersTable.id))
     .where(
       and(
+        eq(deadlinesTable.userId, userId),
         eq(deadlinesTable.status, "upcoming"),
         gte(deadlinesTable.dueDate, now),
       ),
@@ -101,6 +99,7 @@ router.get("/deadlines/upcoming", async (_req, res): Promise<void> => {
 });
 
 router.patch("/deadlines/:id", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const params = UpdateDeadlineParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -117,7 +116,12 @@ router.patch("/deadlines/:id", async (req, res): Promise<void> => {
   const [row] = await db
     .update(deadlinesTable)
     .set(updates)
-    .where(eq(deadlinesTable.id, params.data.id))
+    .where(
+      and(
+        eq(deadlinesTable.id, params.data.id),
+        eq(deadlinesTable.userId, userId),
+      ),
+    )
     .returning();
   if (!row) {
     res.status(404).json({ error: "Deadline not found" });
@@ -127,12 +131,18 @@ router.patch("/deadlines/:id", async (req, res): Promise<void> => {
     ? await db
         .select({ name: mattersTable.name })
         .from(mattersTable)
-        .where(eq(mattersTable.id, row.matterId))
+        .where(
+          and(
+            eq(mattersTable.id, row.matterId),
+            eq(mattersTable.userId, userId),
+          ),
+        )
     : [{ name: null }];
   res.json({ ...row, matterName: matter?.name ?? null });
 });
 
 router.delete("/deadlines/:id", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const params = DeleteDeadlineParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -140,7 +150,12 @@ router.delete("/deadlines/:id", async (req, res): Promise<void> => {
   }
   const [row] = await db
     .delete(deadlinesTable)
-    .where(eq(deadlinesTable.id, params.data.id))
+    .where(
+      and(
+        eq(deadlinesTable.id, params.data.id),
+        eq(deadlinesTable.userId, userId),
+      ),
+    )
     .returning();
   if (!row) {
     res.status(404).json({ error: "Deadline not found" });
@@ -148,9 +163,5 @@ router.delete("/deadlines/:id", async (req, res): Promise<void> => {
   }
   res.sendStatus(204);
 });
-
-// Mark missed: any upcoming deadline with dueDate < now should be flagged.
-// We compute on read by adjusting the response status. (Simple approach.)
-// Currently kept as stored. Could add a background job in a follow-up.
 
 export default router;

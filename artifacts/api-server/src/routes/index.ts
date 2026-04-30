@@ -8,10 +8,13 @@ import deadlinesRouter from "./deadlines";
 import researchRouter from "./research";
 import briefsRouter from "./briefs";
 import settingsRouter from "./settings";
+import { requireAuth } from "../middlewares/requireAuth";
 
 const router: IRouter = Router();
 
 router.use(healthRouter);
+
+router.use(requireAuth);
 router.use(dashboardRouter);
 router.use(mattersRouter);
 router.use(contractsRouter);

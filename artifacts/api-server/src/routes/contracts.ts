@@ -16,31 +16,27 @@ import { analyzeContractContent, draftContract } from "../lib/ai";
 const router: IRouter = Router();
 
 router.get("/contracts", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const params = ListContractsQueryParams.safeParse(req.query);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
     return;
   }
-  const conds = [];
+  const conds = [eq(contractsTable.userId, userId)];
   if (params.data.matterId !== undefined)
     conds.push(eq(contractsTable.matterId, params.data.matterId));
   if (params.data.status)
     conds.push(eq(contractsTable.status, params.data.status));
-  const rows =
-    conds.length > 0
-      ? await db
-          .select()
-          .from(contractsTable)
-          .where(and(...conds))
-          .orderBy(desc(contractsTable.updatedAt))
-      : await db
-          .select()
-          .from(contractsTable)
-          .orderBy(desc(contractsTable.updatedAt));
+  const rows = await db
+    .select()
+    .from(contractsTable)
+    .where(and(...conds))
+    .orderBy(desc(contractsTable.updatedAt));
   res.json(rows);
 });
 
 router.post("/contracts", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const parsed = CreateContractBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -49,6 +45,7 @@ router.post("/contracts", async (req, res): Promise<void> => {
   const [row] = await db
     .insert(contractsTable)
     .values({
+      userId,
       matterId: parsed.data.matterId ?? null,
       title: parsed.data.title,
       type: parsed.data.type,
@@ -62,6 +59,7 @@ router.post("/contracts", async (req, res): Promise<void> => {
 });
 
 router.post("/contracts/draft", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const parsed = DraftContractBody.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ error: parsed.error.message });
@@ -78,6 +76,7 @@ router.post("/contracts/draft", async (req, res): Promise<void> => {
     const [row] = await db
       .insert(contractsTable)
       .values({
+        userId,
         matterId: parsed.data.matterId ?? null,
         title: parsed.data.title,
         type: parsed.data.type,
@@ -95,6 +94,7 @@ router.post("/contracts/draft", async (req, res): Promise<void> => {
 });
 
 router.get("/contracts/:id", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const params = GetContractParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -103,7 +103,12 @@ router.get("/contracts/:id", async (req, res): Promise<void> => {
   const [row] = await db
     .select()
     .from(contractsTable)
-    .where(eq(contractsTable.id, params.data.id));
+    .where(
+      and(
+        eq(contractsTable.id, params.data.id),
+        eq(contractsTable.userId, userId),
+      ),
+    );
   if (!row) {
     res.status(404).json({ error: "Contract not found" });
     return;
@@ -112,6 +117,7 @@ router.get("/contracts/:id", async (req, res): Promise<void> => {
 });
 
 router.patch("/contracts/:id", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const params = UpdateContractParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -125,7 +131,12 @@ router.patch("/contracts/:id", async (req, res): Promise<void> => {
   const [row] = await db
     .update(contractsTable)
     .set(parsed.data)
-    .where(eq(contractsTable.id, params.data.id))
+    .where(
+      and(
+        eq(contractsTable.id, params.data.id),
+        eq(contractsTable.userId, userId),
+      ),
+    )
     .returning();
   if (!row) {
     res.status(404).json({ error: "Contract not found" });
@@ -135,6 +146,7 @@ router.patch("/contracts/:id", async (req, res): Promise<void> => {
 });
 
 router.delete("/contracts/:id", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const params = DeleteContractParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -142,7 +154,12 @@ router.delete("/contracts/:id", async (req, res): Promise<void> => {
   }
   const [row] = await db
     .delete(contractsTable)
-    .where(eq(contractsTable.id, params.data.id))
+    .where(
+      and(
+        eq(contractsTable.id, params.data.id),
+        eq(contractsTable.userId, userId),
+      ),
+    )
     .returning();
   if (!row) {
     res.status(404).json({ error: "Contract not found" });
@@ -152,6 +169,7 @@ router.delete("/contracts/:id", async (req, res): Promise<void> => {
 });
 
 router.post("/contracts/:id/analyze", async (req, res): Promise<void> => {
+  const userId = req.userId!;
   const params = AnalyzeContractParams.safeParse(req.params);
   if (!params.success) {
     res.status(400).json({ error: params.error.message });
@@ -160,7 +178,12 @@ router.post("/contracts/:id/analyze", async (req, res): Promise<void> => {
   const [existing] = await db
     .select()
     .from(contractsTable)
-    .where(eq(contractsTable.id, params.data.id));
+    .where(
+      and(
+        eq(contractsTable.id, params.data.id),
+        eq(contractsTable.userId, userId),
+      ),
+    );
   if (!existing) {
     res.status(404).json({ error: "Contract not found" });
     return;
@@ -178,7 +201,12 @@ router.post("/contracts/:id/analyze", async (req, res): Promise<void> => {
         riskFlags: analysis.riskFlags,
         summary: analysis.summary,
       })
-      .where(eq(contractsTable.id, params.data.id))
+      .where(
+        and(
+          eq(contractsTable.id, params.data.id),
+          eq(contractsTable.userId, userId),
+        ),
+      )
       .returning();
     res.json(row);
   } catch (err) {
