@@ -1,5 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "wouter";
+import { useUser, useClerk } from "@clerk/react";
 import { 
   LayoutDashboard, 
   Briefcase, 
@@ -11,7 +12,9 @@ import {
   Settings as SettingsIcon,
   Plus,
   Scale,
-  ChevronDown
+  ChevronDown,
+  LogOut,
+  User as UserIcon
 } from "lucide-react";
 import { useGetSettings, useUpdateSettings, getGetSettingsQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -29,7 +32,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Jurisdiction } from "@workspace/api-client-react/src/generated/api.schemas";
 
 const navItems = [
-  { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Dashboard", href: "/app", icon: LayoutDashboard },
   { name: "Matters", href: "/matters", icon: Briefcase },
   { name: "Contracts", href: "/contracts", icon: FileText },
   { name: "Documents", href: "/documents", icon: Files },
@@ -46,6 +49,8 @@ interface AppLayoutProps {
 export function AppLayout({ children }: AppLayoutProps) {
   const [location, setLocation] = useLocation();
   const queryClient = useQueryClient();
+  const { user } = useUser();
+  const { signOut } = useClerk();
   const { data: settings, isLoading } = useGetSettings();
   const updateSettings = useUpdateSettings({
     mutation: {
@@ -125,17 +130,65 @@ export function AppLayout({ children }: AppLayoutProps) {
                 <Skeleton className="h-3 w-16 bg-sidebar-accent" />
               </div>
             </div>
-          ) : settings ? (
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-full bg-sidebar-accent flex items-center justify-center text-xs font-bold">
-                {settings.attorneyName?.charAt(0) || settings.firmName?.charAt(0) || "L"}
-              </div>
-              <div className="overflow-hidden">
-                <p className="text-sm font-medium truncate">{settings.attorneyName || "Attorney"}</p>
-                <p className="text-xs text-sidebar-foreground/60 truncate">{settings.firmName || "Firm"}</p>
-              </div>
-            </div>
-          ) : null}
+          ) : (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  className="w-full flex items-center gap-3 hover:bg-sidebar-accent/40 rounded-md p-1 -m-1 transition-colors text-left"
+                  data-testid="button-user-menu"
+                >
+                  <div className="w-8 h-8 rounded-full bg-sidebar-accent flex items-center justify-center text-xs font-bold shrink-0 overflow-hidden">
+                    {user?.imageUrl ? (
+                      <img src={user.imageUrl} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      (user?.firstName?.charAt(0) ||
+                        user?.primaryEmailAddress?.emailAddress?.charAt(0) ||
+                        settings?.attorneyName?.charAt(0) ||
+                        settings?.firmName?.charAt(0) ||
+                        "L").toUpperCase()
+                    )}
+                  </div>
+                  <div className="overflow-hidden flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">
+                      {user?.fullName ||
+                        user?.firstName ||
+                        settings?.attorneyName ||
+                        "Attorney"}
+                    </p>
+                    <p className="text-xs text-sidebar-foreground/60 truncate">
+                      {user?.primaryEmailAddress?.emailAddress ||
+                        settings?.firmName ||
+                        "Firm"}
+                    </p>
+                  </div>
+                  <ChevronDown size={14} className="text-sidebar-foreground/50 shrink-0" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" side="top" className="w-56">
+                <DropdownMenuLabel className="font-normal">
+                  <div className="flex flex-col space-y-0.5">
+                    <p className="text-sm font-medium truncate">
+                      {user?.fullName || user?.firstName || "Account"}
+                    </p>
+                    <p className="text-xs text-muted-foreground truncate">
+                      {user?.primaryEmailAddress?.emailAddress || ""}
+                    </p>
+                  </div>
+                </DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => setLocation("/settings")} data-testid="menu-settings">
+                  <UserIcon className="mr-2 h-4 w-4 text-muted-foreground" /> Workspace settings
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => signOut({ redirectUrl: `${import.meta.env.BASE_URL}` })}
+                  data-testid="menu-signout"
+                >
+                  <LogOut className="mr-2 h-4 w-4 text-muted-foreground" /> Sign out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
         </div>
       </aside>
 

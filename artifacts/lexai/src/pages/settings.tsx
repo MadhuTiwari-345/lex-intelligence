@@ -47,14 +47,14 @@ const REGION_META: Record<Region, { label: string; flag: string; currency: strin
 
 const PLAN_PRICING: Record<PlanTier, Record<Region, { price: string; cadence: string; equiv?: string }>> = {
   solo: {
-    us: { price: "$999", cadence: "/ 2 years", equiv: "≈ $41 / month" },
-    uk: { price: "£799", cadence: "/ 2 years", equiv: "≈ £33 / month" },
-    india: { price: "₹79,999", cadence: "/ 2 years", equiv: "≈ ₹3,333 / month" },
+    us: { price: "$49", cadence: "/ 2 years" },
+    uk: { price: "£39", cadence: "/ 2 years" },
+    india: { price: "₹3,999", cadence: "/ 2 years" },
   },
   firm: {
-    us: { price: "$3,999", cadence: "/ 2 years", equiv: "≈ $167 / month" },
-    uk: { price: "£3,199", cadence: "/ 2 years", equiv: "≈ £133 / month" },
-    india: { price: "₹3,19,999", cadence: "/ 2 years", equiv: "≈ ₹13,333 / month" },
+    us: { price: "$199", cadence: "/ 2 years" },
+    uk: { price: "£159", cadence: "/ 2 years" },
+    india: { price: "₹15,999", cadence: "/ 2 years" },
   },
   enterprise: {
     us: { price: "Custom", cadence: "" },
@@ -505,7 +505,7 @@ export default function Settings() {
 
           <div className="mt-2 space-y-1 text-xs text-muted-foreground">
             <p>{REGION_FEATURES[pricingRegion].lawNote}</p>
-            <p>{REGION_FEATURES[pricingRegion].taxNote} 2-year prepay saves ~15% vs. month-to-month.</p>
+            <p>{REGION_FEATURES[pricingRegion].taxNote} Cancel or renew anytime after the term.</p>
           </div>
         </DialogContent>
       </Dialog>

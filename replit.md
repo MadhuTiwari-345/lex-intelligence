@@ -14,6 +14,7 @@ A legal intelligence platform for solo lawyers, boutique firms, and in-house leg
 - **Client Brief Generator** — translates legalese to plain English.
 - **Multi-Jurisdiction Mode** — India, UK, US, set per matter / contract / document.
 - **Settings** — firm profile and default jurisdiction.
+- **Authentication** — Clerk (Replit-managed). Public landing at `/`, sign-in at `/sign-in`, sign-up at `/sign-up`, app behind sign-in at `/app` and other resource routes. Sign-out via the sidebar user menu.
 
 ## Architecture
 
@@ -22,6 +23,7 @@ A legal intelligence platform for solo lawyers, boutique firms, and in-house leg
 - **Database**: Postgres via Drizzle ORM (`lib/db`). Tables: matters, contracts, documents, deadlines, research_queries, briefs, settings.
 - **Contract**: OpenAPI-first in `lib/api-spec/openapi.yaml`. Codegen produces React Query hooks (`@workspace/api-client-react`) and Zod schemas (`@workspace/api-zod`).
 - **AI**: OpenAI via the Replit AI Integration. Helpers live in `artifacts/api-server/src/lib/ai.ts` and a thin client in `src/lib/openai.ts`. Model: `gpt-5.4`.
+- **Auth**: Clerk via `@clerk/react` (web) and `@clerk/express` (server). Proxy mounted at `/__clerk` in `app.ts`. Branded sign-in / sign-up pages defined in `src/pages/auth.tsx`; routing & `clerkAppearance` (Copper & Cream theme tokens) live in `src/App.tsx`. CSS layer order set in `src/index.css` and `tailwindcss({ optimize: false })` is required in `vite.config.ts` for production CSS layering.
 
 ## Common commands
 
