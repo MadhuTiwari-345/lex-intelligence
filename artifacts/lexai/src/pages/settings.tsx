@@ -45,16 +45,16 @@ const REGION_META: Record<Region, { label: string; flag: string; currency: strin
   india: { label: "India", flag: "IN", currency: "INR", salesEmail: "sales.in@lexai.app" },
 };
 
-const PLAN_PRICING: Record<PlanTier, Record<Region, { price: string; cadence: string }>> = {
+const PLAN_PRICING: Record<PlanTier, Record<Region, { price: string; cadence: string; equiv?: string }>> = {
   solo: {
-    us: { price: "$49", cadence: "/ month" },
-    uk: { price: "£39", cadence: "/ month" },
-    india: { price: "₹3,999", cadence: "/ month" },
+    us: { price: "$999", cadence: "/ 2 years", equiv: "≈ $41 / month" },
+    uk: { price: "£799", cadence: "/ 2 years", equiv: "≈ £33 / month" },
+    india: { price: "₹79,999", cadence: "/ 2 years", equiv: "≈ ₹3,333 / month" },
   },
   firm: {
-    us: { price: "$199", cadence: "/ month" },
-    uk: { price: "£159", cadence: "/ month" },
-    india: { price: "₹15,999", cadence: "/ month" },
+    us: { price: "$3,999", cadence: "/ 2 years", equiv: "≈ $167 / month" },
+    uk: { price: "£3,199", cadence: "/ 2 years", equiv: "≈ £133 / month" },
+    india: { price: "₹3,19,999", cadence: "/ 2 years", equiv: "≈ ₹13,333 / month" },
   },
   enterprise: {
     us: { price: "Custom", cadence: "" },
@@ -65,15 +65,15 @@ const PLAN_PRICING: Record<PlanTier, Record<Region, { price: string; cadence: st
 
 const REGION_FEATURES: Record<Region, { taxNote: string; lawNote: string }> = {
   us: {
-    taxNote: "Prices in USD, exclusive of applicable state sales tax.",
+    taxNote: "Prices billed once for a 24-month term in USD, exclusive of applicable state sales tax.",
     lawNote: "Drafting & analysis tuned to US federal and state law (UCC, Reg D, Delaware GCL, NLRA).",
   },
   uk: {
-    taxNote: "Prices in GBP, exclusive of UK VAT.",
+    taxNote: "Prices billed once for a 24-month term in GBP, exclusive of UK VAT.",
     lawNote: "Drafting & analysis tuned to England & Wales (Companies Act 2006, Employment Rights Act 1996, GDPR/UK GDPR).",
   },
   india: {
-    taxNote: "Prices in INR, exclusive of 18% GST.",
+    taxNote: "Prices billed once for a 24-month term in INR, exclusive of 18% GST.",
     lawNote: "Drafting & analysis tuned to Indian law (ICA 1872, Companies Act 2013, IT Act 2000, DPDP Act 2023).",
   },
 };
@@ -444,10 +444,15 @@ export default function Settings() {
                     <h3 className="font-serif text-xl font-bold text-foreground">{tier.name}</h3>
                     <p className="text-xs text-muted-foreground mt-1 min-h-[2.5rem]">{tier.tagline}</p>
                   </div>
-                  <div className="mb-4 flex items-baseline gap-1">
-                    <span className="font-serif text-3xl font-bold text-foreground">{pricing.price}</span>
-                    {pricing.cadence && (
-                      <span className="text-sm text-muted-foreground">{pricing.cadence}</span>
+                  <div className="mb-4">
+                    <div className="flex items-baseline gap-1">
+                      <span className="font-serif text-3xl font-bold text-foreground">{pricing.price}</span>
+                      {pricing.cadence && (
+                        <span className="text-sm text-muted-foreground">{pricing.cadence}</span>
+                      )}
+                    </div>
+                    {pricing.equiv && (
+                      <div className="text-xs text-muted-foreground mt-1">{pricing.equiv}</div>
                     )}
                   </div>
                   <ul className="space-y-2 mb-6 flex-1">
@@ -500,7 +505,7 @@ export default function Settings() {
 
           <div className="mt-2 space-y-1 text-xs text-muted-foreground">
             <p>{REGION_FEATURES[pricingRegion].lawNote}</p>
-            <p>{REGION_FEATURES[pricingRegion].taxNote} Annual billing on Firm and Enterprise saves 15%.</p>
+            <p>{REGION_FEATURES[pricingRegion].taxNote} 2-year prepay saves ~15% vs. month-to-month.</p>
           </div>
         </DialogContent>
       </Dialog>
