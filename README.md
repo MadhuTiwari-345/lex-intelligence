@@ -11,12 +11,10 @@
 </p>
 
 <p align="center">
-  <a href="#"><img src="https://img.shields.io/badge/Build-Passing-22c55e?style=for-the-badge" /></a>
-  <a href="#"><img src="https://img.shields.io/badge/TypeScript-5.9-blue?style=for-the-badge&logo=typescript" /></a>
-  <a href="#"><img src="https://img.shields.io/badge/React-19-61dafb?style=for-the-badge&logo=react" /></a>
-  <a href="#"><img src="https://img.shields.io/badge/Node.js-Express-3c873a?style=for-the-badge&logo=node.js" /></a>
-  <a href="#"><img src="https://img.shields.io/badge/PostgreSQL-Database-336791?style=for-the-badge&logo=postgresql" /></a>
-  <a href="#"><img src="https://img.shields.io/badge/License-MIT-black?style=for-the-badge" /></a>
+  <img src="https://img.shields.io/badge/TypeScript-5.9-B87333?style=for-the-badge&logo=typescript&logoColor=FDF6EC" />
+  <img src="https://img.shields.io/badge/React-19-8C4A2F?style=for-the-badge&logo=react&logoColor=FDF6EC" />
+  <img src="https://img.shields.io/badge/Node.js-Express-B87333?style=for-the-badge&logo=node.js&logoColor=FDF6EC" />
+  <img src="https://img.shields.io/badge/PostgreSQL-DB-8C4A2F?style=for-the-badge&logo=postgresql&logoColor=FDF6EC" />
 </p>
 
 <p align="center">
@@ -26,10 +24,12 @@
 </p>
 
 <p align="center">
-  <a href="#"><b>Live Demo</b></a> •
-  <a href="#"><b>Documentation</b></a> •
-  <a href="#"><b>Report Bug</b></a> •
-  <a href="#"><b>Request Feature</b></a>
+  <a href="https://lex-intelligence--mtiwari241905.replit.app/">
+    <img src="https://img.shields.io/badge/Live%20Demo-Open-B87333?style=for-the-badge&logoColor=FDF6EC" />
+  </a>
+  <a href="https://github.com/MadhuTiwari-345/lex-intelligence">
+    <img src="https://img.shields.io/badge/GitHub-Repository-8C4A2F?style=for-the-badge&logoColor=FDF6EC" />
+  </a>
 </p>
 
 ---
