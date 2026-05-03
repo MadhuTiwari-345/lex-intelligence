@@ -23,6 +23,15 @@
   </sub>
 </p>
 
+
+<svg xmlns="http://www.w3.org/2000/svg" width="210" height="40" viewBox="0 0 210 40">
+  <rect width="210" height="40" rx="10" fill="#B87333"/>
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+        font-family="Inter, Arial, sans-serif" font-size="14" fill="#FDF6EC">
+    🚀 Live Demo
+  </text>
+</svg>
+
 <p align="center">
   <a href="https://lex-intelligence--mtiwari241905.replit.app/">
     <img src="https://img.shields.io/badge/Live%20Demo-Open-B87333?style=for-the-badge&logoColor=FDF6EC" />
