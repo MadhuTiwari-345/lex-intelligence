@@ -70,18 +70,38 @@
 
 ## <h2 align="center">📋 Table of Contents</h2>
 
-<h2 align="center" id="overview">⚖️ Overview</h2>
-<h2 align="center" id="features">⚖️ Features</h2>
-<h2 align="center" id="tech-stack">⚖️ Tech Stack</h2>
-<h2 align="center" id="project-structure">⚖️ Project Structure</h2>
-<h2 align="center" id="getting-started">⚖️ Getting Started</h2>
-<h2 align="center" id="environment-variables">⚖️ Environment Variables</h2>
-<h2 align="center" id="api-reference">⚖️ API Reference</h2>
-<h2 align="center" id="authentication">⚖️ Authentication</h2>
-<h2 align="center" id="database">⚖️ Database</h2>
-<h2 align="center" id="deployment">⚖️ Deployment</h2>
-<h2 align="center" id="roadmap">⚖️ Roadmap</h2>
-<h2 align="center" id="license">⚖️ License</h2>
+<a id="features"></a>
+## ⚖️ Features
+
+<a id="tech-stack"></a>
+## ⚖️ Tech Stack
+
+<a id="project-structure"></a>
+## ⚖️ Project Structure
+
+<a id="getting-started"></a>
+## ⚖️ Getting Started
+
+<a id="environment-variables"></a>
+## ⚖️ Environment Variables
+
+<a id="api-reference"></a>
+## ⚖️ API Reference
+
+<a id="authentication"></a>
+## ⚖️ Authentication
+
+<a id="database"></a>
+## ⚖️ Database
+
+<a id="deployment"></a>
+## ⚖️ Deployment
+
+<a id="roadmap"></a>
+## ⚖️ Roadmap
+
+<a id="license"></a>
+## ⚖️ License
 
 ---
 
