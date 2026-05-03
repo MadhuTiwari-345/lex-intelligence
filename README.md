@@ -70,7 +70,7 @@
 
 ## <h2 align="center">📋 Table of Contents</h2>
 
-- [Overview](#overview)
+- [Overview](<h2 align="center">⚖️ Overview</h2>)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
