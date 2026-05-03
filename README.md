@@ -68,7 +68,7 @@
 
 ---
 
-## 📋 Table of Contents
+## <h2 align="center">📋 Table of Contents</h2>
 
 - [Overview](#overview)
 - [Features](#features)
