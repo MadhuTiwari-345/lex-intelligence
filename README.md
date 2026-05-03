@@ -413,12 +413,13 @@ The app is configured for Replit's deployment pipeline with:
 - Environment secrets managed via Replit Secrets
 - PostgreSQL via Replit's managed database
 
-**It's live and it actually works.**
+⚖️ **It's live and it actually works.** ⚖️
 [lex-intelligence--mtiwari241905.replit.app](https://lex-intelligence--mtiwari241905.replit.app/) — real database, real auth, real AI, 8 fully functional API modules. Not a prototype. _(Currently hosted on Replit · migrating to **Google Cloud Run** by June 2026)_
 
-**Google Cloud Run Migration** — Our Replit deployment serves as the hackathon demo. 
-Production infrastructure moves to **Google Cloud Run** in June 2026 — 
-containerised, auto-scaling, and with a permanent custom domain.
+
+⚖️ **Google Cloud Run Migration** ⚖️ — Our Replit deployment serves as the hackathon demo. 
+Production infrastructure moves to **Google Cloud Run** in June 2026 — containerised, auto-scaling, and with a permanent custom domain.
+
 
 ### ⚖️ Self-hosted / Custom Deployment ⚖️
 
@@ -438,7 +439,7 @@ node dist/server/index.js
 
 ---
 
-## 🧠 Why LexAI?
+## 🧠 Why LexAI? ⚖️
 
 Legal work is:
 - Repetitive  
@@ -481,7 +482,7 @@ MIT License — see [LICENSE](./LICENSE) for details.
 
 ---
 
-## 🏁 Conclusion
+## 🏁 Conclusion ⚖️
 
 LexAI is not just another AI tool.
 
@@ -496,7 +497,7 @@ If you're building in legal tech — this is a serious foundation.
 
 
 <div align="center">
-  <strong>Built with ⚖️ by the LexAI team</strong><br>
+  <strong>Built with ⚖️ by the LexAI team ⚖️</strong><br>
   <sub>Making AI accessible to every lawyer, not just Big Law.</sub>
 </div>
 
