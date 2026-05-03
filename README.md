@@ -68,40 +68,42 @@
 
 ---
 
-## <h2 align="center">📋 Table of Contents</h2>
+---
 
-<a id="features"></a>
-## ⚖️ Features
+## ⚡ Why LexAI
 
-<a id="tech-stack"></a>
-## ⚖️ Tech Stack
+<p align="center">
+  ⚖️ AI Contract Drafting &nbsp; • &nbsp;
+  🧠 Clause Intelligence &nbsp; • &nbsp;
+  📚 Case Law Research &nbsp; • &nbsp;
+  📅 Deadline Tracking &nbsp; • &nbsp;
+  📝 Client Briefs
+</p>
 
-<a id="project-structure"></a>
-## ⚖️ Project Structure
+---
 
-<a id="getting-started"></a>
-## ⚖️ Getting Started
+---
 
-<a id="environment-variables"></a>
-## ⚖️ Environment Variables
+## 🎯 Built for Real Legal Work
 
-<a id="api-reference"></a>
-## ⚖️ API Reference
+❌ Lawyers waste hours on repetitive drafting  
+❌ Research is fragmented across tools  
+❌ Deadlines slip through cracks  
 
-<a id="authentication"></a>
-## ⚖️ Authentication
+✅ LexAI brings everything into **one intelligent workspace**
 
-<a id="database"></a>
-## ⚖️ Database
+---
 
-<a id="deployment"></a>
-## ⚖️ Deployment
+---
 
-<a id="roadmap"></a>
-## ⚖️ Roadmap
+## 📊 Platform Snapshot
 
-<a id="license"></a>
-## ⚖️ License
+- ⚖️ 8 Core Legal Modules  
+- ⚡ Sub-30s AI contract generation  
+- 🌍 Multi-jurisdiction (IN • UK • US)  
+- 🔐 Secure, user-scoped architecture  
+
+---
 
 ---
 
