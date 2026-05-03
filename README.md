@@ -85,7 +85,7 @@
 
 ---
 
-## ⚖️ Overview
+## <h2 align="center">⚖️ Overview</h2>
 
 LexAI is a full-stack legal SaaS application that automates the most time-consuming parts of a lawyer's workflow. Built with a TypeScript monorepo architecture, it provides a clean React frontend, a robust Express API, and AI-powered features for contract drafting, case research, and client brief generation.
 
@@ -93,7 +93,7 @@ LexAI is a full-stack legal SaaS application that automates the most time-consum
 
 ---
 
-## ⚖️ Features
+## <h2 align="center">⚖️ Features</h2>
 
 ## ✨ What Makes LexAI Different
 
@@ -105,7 +105,7 @@ LexAI is a full-stack legal SaaS application that automates the most time-consum
 
 ---
 
-### ⚖️ Core Modules ⚖️
+### <h2 align="center">⚖️ Core Modules ⚖️</h2>
 
 | Module | Description |
 |--------|-------------|
@@ -120,7 +120,7 @@ LexAI is a full-stack legal SaaS application that automates the most time-consum
 
 ---
 
-### ⚖️ AI Capabilities ⚖️
+### <h2 align="center">⚖️ AI Capabilities ⚖️</h2>
 
 - **Contract Drafting Engine** — Generate jurisdiction-compliant contracts from plain English in under 30 seconds
 - **Document Intelligence** — Clause-by-clause risk analysis with HIGH / MEDIUM / LOW severity scoring
@@ -131,7 +131,7 @@ LexAI is a full-stack legal SaaS application that automates the most time-consum
 
 ---
 
-### ⚖️Platform Features ⚖️
+### <h2 align="center">⚖️Platform Features ⚖️</h2>
 
 - Clerk-based authentication with per-user data scoping
 - Localised pricing for multiple countries with 2-year billing cycle
@@ -140,7 +140,7 @@ LexAI is a full-stack legal SaaS application that automates the most time-consum
 
 ---
 
-## ⚖️ Tech Stack ⚖️
+## <h2 align="center">⚖️ Tech Stack ⚖️</h2>
 
 ### ⚖️ Frontend
 | Technology | Version | Purpose |
@@ -177,7 +177,7 @@ LexAI is a full-stack legal SaaS application that automates the most time-consum
 
 ---
 
-## ⚖️ Project Structure ⚖️
+## <h2 align="center">⚖️ Project Structure ⚖️</h2>
 
 ```
 Lex-Intelligence/
@@ -226,7 +226,7 @@ Lex-Intelligence/
 
 ---
 
-## ⚖️ Getting Started ⚖️
+## <h2 align="center">⚖️ Getting Started ⚖️</h2>
 
 ### ⚖️ Prerequisites
 
@@ -262,7 +262,7 @@ The app will be available at `http://localhost:5000` (API) and `http://localhost
 
 ---
 
-### ⚖️ Available Scripts ⚖️
+### <h2 align="center">⚖️ Available Scripts ⚖️</h2>
 
 ```bash
 pnpm dev          # Start both frontend and backend in watch mode
@@ -276,7 +276,7 @@ pnpm type-check   # Run TypeScript compiler check
 
 ---
 
-## ⚖️ Environment Variables ⚖️
+##  <h2 align="center">⚖️ Environment Variables ⚖️</h2>
 
 Create a `.env` file in the project root:
 
@@ -300,13 +300,13 @@ VITE_API_URL=http://localhost:5000
 
 ---
 
-## ⚖️ API Reference ⚖️
+## <h2 align="center">⚖️ API Reference ⚖️</h2>
 
 All routes except `/health` require a valid Clerk JWT in the `Authorization: Bearer <token>` header.
 
 
 
-### ⚖️ Health ⚖️
+### <h2 align="center">⚖️ Health ⚖️</h2>
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -314,7 +314,7 @@ All routes except `/health` require a valid Clerk JWT in the `Authorization: Bea
 
 
 
-### ⚖️ Dashboard ⚖️
+### <h2 align="center">⚖️ Dashboard ⚖️</h2>
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -322,7 +322,7 @@ All routes except `/health` require a valid Clerk JWT in the `Authorization: Bea
 
 
 
-### ⚖️ Matters ⚖️
+### <h2 align="center">⚖️ Matters ⚖️</h2>
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -334,7 +334,7 @@ All routes except `/health` require a valid Clerk JWT in the `Authorization: Bea
 
 
 
-### ⚖️ Contracts ⚖️
+### <h2 align="center">⚖️ Contracts ⚖️</h2>
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -346,7 +346,7 @@ All routes except `/health` require a valid Clerk JWT in the `Authorization: Bea
 
 
 
-### ⚖️ Documents ⚖️
+### <h2 align="center">⚖️ Documents ⚖️</h2>
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -357,7 +357,7 @@ All routes except `/health` require a valid Clerk JWT in the `Authorization: Bea
 
 
 
-### ⚖️ Deadlines ⚖️
+### <h2 align="center">⚖️ Deadlines ⚖️</h2>
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -368,7 +368,7 @@ All routes except `/health` require a valid Clerk JWT in the `Authorization: Bea
 
 
 
-### ⚖️ Research ⚖️
+### <h2 align="center">⚖️ Research ⚖️</h2>
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -378,7 +378,7 @@ All routes except `/health` require a valid Clerk JWT in the `Authorization: Bea
 
 
 
-### ⚖️ Briefs ⚖️
+### <h2 align="center">⚖️ Briefs ⚖️</h2>
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -389,7 +389,7 @@ All routes except `/health` require a valid Clerk JWT in the `Authorization: Bea
 
 
 
-### ⚖️ Settings ⚖️
+### <h2 align="center">⚖️ Settings ⚖️</h2>
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
@@ -398,7 +398,7 @@ All routes except `/health` require a valid Clerk JWT in the `Authorization: Bea
 
 ---
 
-## ⚖️ Authentication ⚖️
+## <h2 align="center">⚖️ Authentication ⚖️</h2>
 
 LexAI uses [Clerk](https://clerk.com) for authentication. Every authenticated route passes through the `requireAuth` middleware, which:
 
@@ -410,11 +410,11 @@ All user data is isolated — users can only access their own matters, contracts
 
 ---
 
-## ⚖️ Database ⚖️
+## <h2 align="center">⚖️ Database ⚖️</h2>
 
 LexAI uses **PostgreSQL** with **Drizzle ORM** for type-safe, migration-tracked database access.
 
-### ⚖️ Key Models
+### <h2 align="center">⚖️ Key Models</h2>
 
 ```
 User settings     → jurisdiction, plan tier, preferences
@@ -426,21 +426,23 @@ Research          → id, userId, query, jurisdiction, results, citations
 Briefs            → id, userId, matterId?, title, complexity, originalText, output
 ```
 
-### ⚖️ Deadline Types ⚖️
+### <h2 align="center">⚖️ Deadline Types ⚖️</h2>
+
 `court_date` | `filing_deadline` | `statute_of_limitations` | `contract_expiry` | `other`
 
 
-### ⚖️ Brief Complexity Levels ⚖️
+### <h2 align="center">⚖️ Brief Complexity Levels ⚖️</h2>
+
 `basic` | `standard` | `detailed`
 
 ---
 
-## ⚖️ Deployment ⚖️
+## <h2 align="center">⚖️ Deployment ⚖️</h2>
 
 LexAI was built and deployed on **Replit** using Replit's autoscale deployment infrastructure.
 
 
-### ⚖️ Replit Deployment ⚖️
+### <h2 align="center">⚖️ Replit Deployment ⚖️</h2>
 
 The app is configured for Replit's deployment pipeline with:
 - Automatic builds on push to `main`
@@ -457,7 +459,7 @@ Production infrastructure moves to **Google Cloud Run** in June 2026 — contain
 
 ---
 
-### ⚖️ Self-hosted / Custom Deployment ⚖️
+### <h2 align="center">⚖️ Self-hosted / Custom Deployment ⚖️</h2>
 
 ```bash
 # Build
@@ -470,6 +472,7 @@ node dist/server/index.js
 ---
 
 ⚖️ Recommended infrastructure for self-hosting:
+
 - **Frontend:** Vercel or Cloudflare Pages
 - **Backend:** Railway, Render, or AWS App Runner
 - **Database:** Supabase, Neon, or AWS RDS (PostgreSQL)
@@ -477,7 +480,7 @@ node dist/server/index.js
 
 ---
 
-## 🧠 Why LexAI? ⚖️
+## <h2 align="center">🧠 Why LexAI? ⚖️</h2>
 
 Legal work is:
 - Repetitive  
@@ -490,7 +493,7 @@ Instead of juggling tools, lawyers get a **single intelligent workspace**.
 
 ---
 
-## ⚖️ Roadmap ⚖️
+## <h2 align="center">⚖️ Roadmap ⚖️</h2>
 
 - [ ] **Word / DOCX export** for drafted contracts
 - [ ] **PDF generation** for client briefs
@@ -503,7 +506,7 @@ Instead of juggling tools, lawyers get a **single intelligent workspace**.
 
 ---
 
-## ⚖️ Contributing ⚖️
+## <h2 align="center">⚖️ Contributing ⚖️</h2>
 
 1. Fork the repository
 2. Create a feature branch: `git checkout -b feature/your-feature`
@@ -515,13 +518,13 @@ Please run `pnpm lint` and `pnpm type-check` before submitting.
 
 ---
 
-## ⚖️ License ⚖️
+## <h2 align="center">⚖️ License ⚖️</h2>
 
 MIT License — see [LICENSE](./LICENSE) for details.
 
 ---
 
-## 🏁 Conclusion ⚖️
+## <h2 align="center">🏁 Conclusion ⚖️</h2>
 
 LexAI is not just another AI tool.
 
