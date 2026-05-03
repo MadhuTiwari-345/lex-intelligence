@@ -101,7 +101,9 @@ LexAI is a full-stack legal SaaS application that automates the most time-consum
 - ⚡ **Draft contracts in seconds** — From plain English to structured legal docs  
 - 🧠 **Clause-level intelligence** — Risk scoring + rewrite suggestions  
 - 🌍 **Multi-jurisdiction ready** — India, UK, US  
-- 🔒 **Secure by design** — User-scoped data, private processing  
+- 🔒 **Secure by design** — User-scoped data, private processing
+
+---
 
 ### ⚖️ Core Modules ⚖️
 
@@ -116,6 +118,8 @@ LexAI is a full-stack legal SaaS application that automates the most time-consum
 | **Briefs** | One-click plain-English client brief generation from complex legalese |
 | **Settings** | User profile, subscription plan management, and multi-jurisdiction preferences |
 
+---
+
 ### ⚖️ AI Capabilities ⚖️
 
 - **Contract Drafting Engine** — Generate jurisdiction-compliant contracts from plain English in under 30 seconds
@@ -124,6 +128,8 @@ LexAI is a full-stack legal SaaS application that automates the most time-consum
 - **Client Brief Generator** — Three complexity levels: Basic, Standard, and Detailed
 - **Risk Scoring** — Numeric 0–100 risk score per contract with flagged clauses and suggested rewrites
 - **Multi-jurisdiction mode** — Switch between Indian, UK, and US law instantly
+
+---
 
 ### ⚖️Platform Features ⚖️
 
@@ -150,6 +156,8 @@ LexAI is a full-stack legal SaaS application that automates the most time-consum
 | Lucide React | 0.545.x | Icon library |
 | shadcn/ui | — | Accessible component primitives |
 
+
+
 ### ⚖️ Backend
 | Technology | Version | Purpose |
 |------------|---------|---------|
@@ -159,6 +167,8 @@ LexAI is a full-stack legal SaaS application that automates the most time-consum
 | PostgreSQL | — | Primary database |
 | Clerk | — | Authentication and user management |
 | Orval | 8.5.3 | Auto-generated API client from OpenAPI |
+
+
 
 ### ⚖️ Fonts
 - **Libre Baskerville** — Display / headings (serif authority)
@@ -225,6 +235,8 @@ Lex-Intelligence/
 - PostgreSQL database
 - Clerk account (for authentication)
 
+---
+
 ### ⚖️ Installation ⚖️
 
 ```bash
@@ -247,6 +259,8 @@ pnpm dev
 ```
 
 The app will be available at `http://localhost:5000` (API) and `http://localhost:5173` (frontend).
+
+---
 
 ### ⚖️ Available Scripts ⚖️
 
@@ -290,17 +304,23 @@ VITE_API_URL=http://localhost:5000
 
 All routes except `/health` require a valid Clerk JWT in the `Authorization: Bearer <token>` header.
 
+
+
 ### ⚖️ Health ⚖️
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `GET` | `/health` | Service health check — returns `{ status: "ok" }` |
 
+
+
 ### ⚖️ Dashboard ⚖️
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | `GET` | `/dashboard/summary` | Aggregate stats: matters, contracts, deadlines, briefs |
+
+
 
 ### ⚖️ Matters ⚖️
 
@@ -312,6 +332,8 @@ All routes except `/health` require a valid Clerk JWT in the `Authorization: Bea
 | `PATCH` | `/matters/:id` | Update matter |
 | `DELETE` | `/matters/:id` | Delete matter |
 
+
+
 ### ⚖️ Contracts ⚖️
 
 | Method | Endpoint | Description |
@@ -322,6 +344,8 @@ All routes except `/health` require a valid Clerk JWT in the `Authorization: Bea
 | `PATCH` | `/contracts/:id` | Update contract |
 | `DELETE` | `/contracts/:id` | Delete contract |
 
+
+
 ### ⚖️ Documents ⚖️
 
 | Method | Endpoint | Description |
@@ -330,6 +354,8 @@ All routes except `/health` require a valid Clerk JWT in the `Authorization: Bea
 | `POST` | `/documents` | Upload and analyse a document |
 | `GET` | `/documents/:id` | Get document with clause analysis |
 | `DELETE` | `/documents/:id` | Delete document |
+
+
 
 ### ⚖️ Deadlines ⚖️
 
@@ -340,6 +366,8 @@ All routes except `/health` require a valid Clerk JWT in the `Authorization: Bea
 | `PATCH` | `/deadlines/:id` | Update deadline status |
 | `DELETE` | `/deadlines/:id` | Delete deadline |
 
+
+
 ### ⚖️ Research ⚖️
 
 | Method | Endpoint | Description |
@@ -347,6 +375,8 @@ All routes except `/health` require a valid Clerk JWT in the `Authorization: Bea
 | `GET` | `/research` | List research sessions |
 | `POST` | `/research` | Start a new case law research query |
 | `GET` | `/research/:id` | Get research detail with citations |
+
+
 
 ### ⚖️ Briefs ⚖️
 
@@ -356,6 +386,8 @@ All routes except `/health` require a valid Clerk JWT in the `Authorization: Bea
 | `POST` | `/briefs` | Generate a brief from legalese (complexity: `basic` \| `standard` \| `detailed`) |
 | `GET` | `/briefs/:id` | Get brief detail |
 | `DELETE` | `/briefs/:id` | Delete brief |
+
+
 
 ### ⚖️ Settings ⚖️
 
@@ -397,6 +429,7 @@ Briefs            → id, userId, matterId?, title, complexity, originalText, ou
 ### ⚖️ Deadline Types ⚖️
 `court_date` | `filing_deadline` | `statute_of_limitations` | `contract_expiry` | `other`
 
+
 ### ⚖️ Brief Complexity Levels ⚖️
 `basic` | `standard` | `detailed`
 
@@ -406,12 +439,14 @@ Briefs            → id, userId, matterId?, title, complexity, originalText, ou
 
 LexAI was built and deployed on **Replit** using Replit's autoscale deployment infrastructure.
 
+
 ### ⚖️ Replit Deployment ⚖️
 
 The app is configured for Replit's deployment pipeline with:
 - Automatic builds on push to `main`
 - Environment secrets managed via Replit Secrets
 - PostgreSQL via Replit's managed database
+
 
 ⚖️ **It's live and it actually works.** ⚖️
 [lex-intelligence--mtiwari241905.replit.app](https://lex-intelligence--mtiwari241905.replit.app/) — real database, real auth, real AI, 8 fully functional API modules. Not a prototype. _(Currently hosted on Replit · migrating to **Google Cloud Run** by June 2026)_
@@ -420,6 +455,7 @@ The app is configured for Replit's deployment pipeline with:
 ⚖️ **Google Cloud Run Migration** ⚖️ — Our Replit deployment serves as the hackathon demo. 
 Production infrastructure moves to **Google Cloud Run** in June 2026 — containerised, auto-scaling, and with a permanent custom domain.
 
+---
 
 ### ⚖️ Self-hosted / Custom Deployment ⚖️
 
@@ -430,6 +466,8 @@ pnpm build
 # Set production env vars, then:
 node dist/server/index.js
 ```
+
+---
 
 ⚖️ Recommended infrastructure for self-hosting:
 - **Frontend:** Vercel or Cloudflare Pages
@@ -451,6 +489,7 @@ LexAI reduces hours of manual effort into minutes — without compromising accur
 Instead of juggling tools, lawyers get a **single intelligent workspace**.
 
 ---
+
 ## ⚖️ Roadmap ⚖️
 
 - [ ] **Word / DOCX export** for drafted contracts
@@ -494,7 +533,6 @@ It’s a **legal operating system** built for:
 If you're building in legal tech — this is a serious foundation.
 
 ---
-
 
 <div align="center">
   <strong>Built with ⚖️ by the LexAI team ⚖️</strong><br>
