@@ -70,52 +70,18 @@
 
 ## <h2 align="center">📋 Table of Contents</h2>
 
-<p align="center">
-
-<a href="#overview">
-  <img src="https://img.shields.io/badge/Overview-⚖️-B87333?style=for-the-badge" />
-</a>
-<a href="#features">
-  <img src="https://img.shields.io/badge/Features-✨-8C4A2F?style=for-the-badge" />
-</a>
-<a href="#tech-stack">
-  <img src="https://img.shields.io/badge/Tech%20Stack-🛠-B87333?style=for-the-badge" />
-</a>
-<a href="#project-structure">
-  <img src="https://img.shields.io/badge/Structure-📁-8C4A2F?style=for-the-badge" />
-</a>
-<a href="#getting-started">
-  <img src="https://img.shields.io/badge/Getting%20Started-🚀-B87333?style=for-the-badge" />
-</a>
-
-<br/>
-
-<a href="#environment-variables">
-  <img src="https://img.shields.io/badge/Env-🔑-8C4A2F?style=for-the-badge" />
-</a>
-<a href="#api-reference">
-  <img src="https://img.shields.io/badge/API-📡-B87333?style=for-the-badge" />
-</a>
-<a href="#authentication">
-  <img src="https://img.shields.io/badge/Auth-🔐-8C4A2F?style=for-the-badge" />
-</a>
-<a href="#database">
-  <img src="https://img.shields.io/badge/Database-🗄-B87333?style=for-the-badge" />
-</a>
-<a href="#deployment">
-  <img src="https://img.shields.io/badge/Deployment-☁️-8C4A2F?style=for-the-badge" />
-</a>
-
-<br/>
-
-<a href="#roadmap">
-  <img src="https://img.shields.io/badge/Roadmap-🛣-B87333?style=for-the-badge" />
-</a>
-<a href="#license">
-  <img src="https://img.shields.io/badge/License-📜-8C4A2F?style=for-the-badge" />
-</a>
-
-</p>
+<h2 align="center" id="overview">⚖️ Overview</h2>
+<h2 align="center" id="features">⚖️ Features</h2>
+<h2 align="center" id="tech-stack">⚖️ Tech Stack</h2>
+<h2 align="center" id="project-structure">⚖️ Project Structure</h2>
+<h2 align="center" id="getting-started">⚖️ Getting Started</h2>
+<h2 align="center" id="environment-variables">⚖️ Environment Variables</h2>
+<h2 align="center" id="api-reference">⚖️ API Reference</h2>
+<h2 align="center" id="authentication">⚖️ Authentication</h2>
+<h2 align="center" id="database">⚖️ Database</h2>
+<h2 align="center" id="deployment">⚖️ Deployment</h2>
+<h2 align="center" id="roadmap">⚖️ Roadmap</h2>
+<h2 align="center" id="license">⚖️ License</h2>
 
 ---
 
